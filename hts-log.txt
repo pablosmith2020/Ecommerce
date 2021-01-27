@@ -1,0 +1,27 @@
+HTTrack3.49-2+htsswf+htsjava launched on Tue, 15 Dec 2020 11:42:57 at http://themes.rokaux.com/unishop/v3.2.1/template-1/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Pn%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "es, en, *" http://themes.rokaux.com/unishop/v3.2.1/template-1/ -O1 "C:\Users\Pablo\OneDrive\Site\SIte" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+11:45:32	Error: 	"Bad Request" (400) at link www.googletagmanager.com/gtm.js?id= (from themes.rokaux.com/unishop/v3.2.1/template-1/)
+11:47:33	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/checkout.html (from themes.rokaux.com/unishop/v3.2.1/template-1/)
+11:47:34	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/account-open-ticket.html (from themes.rokaux.com/unishop/v3.2.1/template-1/)
+11:48:22	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/mobile-app.html (from themes.rokaux.com/unishop/v3.2.1/template-1/)
+11:48:22	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/services.html (from themes.rokaux.com/unishop/v3.2.1/template-1/)
+11:50:19	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/"https://player.vimeo.com/video/138235312?color=ffffff&title=0&byline=0&portrait=0%22 (from themes.rokaux.com/unishop/v3.2.1/template-1/home-collection-showcase.html)
+11:50:19	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/"https://player.vimeo.com/video/138290617?color=ffffff&title=0&byline=0&portrait=0%22 (from themes.rokaux.com/unishop/v3.2.1/template-1/home-collection-showcase.html)
+11:50:19	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/"//www.youtube.com/embed/B81qd2v6alw?rel=0%22 (from themes.rokaux.com/unishop/v3.2.1/template-1/shop-single.html)
+11:50:19	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/orderDetails (from themes.rokaux.com/unishop/v3.2.1/template-1/order-tracking.html)
+11:50:19	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/docs/index.html (from themes.rokaux.com/unishop/v3.2.1/template-1/docs/dev-setup.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/components/index.html (from themes.rokaux.com/unishop/v3.2.1/template-1/components/accordion.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/components/"https://www.youtube-nocookie.com/embed/n2CCz4x2xGE?rel=0%22 (from themes.rokaux.com/unishop/v3.2.1/template-1/components/gallery.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/components/"https://player.vimeo.com/video/70022464?color=ffffff&title=0&byline=0&portrait=0%22 (from themes.rokaux.com/unishop/v3.2.1/template-1/components/gallery.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/img/components/img13.jpg (from themes.rokaux.com/unishop/v3.2.1/template-1/components/media.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/img/components/img15.jpg (from themes.rokaux.com/unishop/v3.2.1/template-1/components/media.html)
+11:50:31	Error: 	"Not Found" (404) at link themes.rokaux.com/unishop/v3.2.1/template-1/img/components/img14.jpg (from themes.rokaux.com/unishop/v3.2.1/template-1/components/media.html)
+
+HTTrack Website Copier/3.49-2 mirror complete in 8 minutes 18 seconds : 319 links scanned, 302 files written (15693234 bytes overall) [12190140 bytes received at 24478 bytes/sec], 4273795 bytes transferred using HTTP compression in 98 files, ratio 16%, 8.2 requests per connection
+(16 errors, 0 warnings, 0 messages)
