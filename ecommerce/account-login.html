@@ -577,7 +577,7 @@
       <div class="page-title">
         <div class="container">
           <div class="column">
-            <h1>Registrar Nuevo Usuario</h1>
+            <h1>Ingresar / Registrar Nuevo Usuario</h1>
           </div>
           <div class="column">
             <ul class="breadcrumbs">
@@ -614,7 +614,7 @@
                 <input id="userPassLogin" class="form-control" type="password" placeholder="Password" required><span class="input-group-addon"><i class="icon-lock"></i></span>
               </div>
               <div id="viewErrorLogin">
-                <!--<p class="text-danger">Usuario o Password Incorrecta, por favor pruebe nuevamente.</p>-->
+                <!--<p class="text-danger" disabled>prueba.</p>-->
             </div>
               <div class="d-flex flex-wrap justify-content-between padding-bottom-1x">
                 <div class="custom-control custom-checkbox">
@@ -635,13 +635,13 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="reg-fn">Nombres</label>
-                  <input class="form-control" type="text" id="reg-fn" required>
+                  <input class="form-control" type="text" id="regName" required>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-ln">Apellido</label>
-                  <input class="form-control" type="text" id="reg-ln" required>
+                  <label for="reg-fn">Apellido</label>
+                  <input class="form-control" type="text" id="regLastName" required>
                 </div>
               </div>
               <div class="col-sm-6">
@@ -652,45 +652,76 @@
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-phone">Provincia</label>
-                  <select class="form-control" id="reg-province" required >
-                    <option value="value1">Capital Federal</option>
-                    <option value="value2" selected>San Luis</option>
-                    <option value="value3">Cordoba</option>
+                  <label for="lblRegProvince">Provincia</label>
+                  <select  for="reg-fn" class="form-control" id="regProvince" required >
+                    <option value="0" selected>Seleccione una Provincia</option>
+                    <option value="1">Capital Federal</option>
+                    <option value="2" >San Luis</option>
+                    <option value="3">Cordoba</option>
                   </select>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-phone">Telefono Celular</label>
-                  <input class="form-control" type="text" id="reg-phone" required>
+                  <label for="regcelPhone">Telefono Celular</label>
+                  <input class="form-control" type="tel" id="reg-phone" placeholder="(011) 7628-4353" required>
+                  <!-- pattern="\([0-9]{4}\) [0-9]{4}[ -][0-9]{4}" title="Un número de teléfono válido consta de un código de área  entre paréntesis, un espacio, los restantes dígitos del número separados por  guión medio (-)" -->
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-phone">Telefono Particular</label>
+                  <label for="regPrivaPhone">Telefono Particular</label>
                   <input class="form-control" type="text" id="reg-phone-private" required>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-pass">Password</label>
+                  <label for="regPass">Password</label>
                   <input class="form-control" type="password" id="reg-pass" required>
                 </div>
               </div>
+              <!-- Calidad de Contraseña
+                Tiene ocho caracteres como mínimo.
+                Letras mayúsculas.
+                Letras minúsculas.
+                Números.
+                Símbolos del teclado (todos los caracteres del teclado que no se definen como letras o números) y espacios.-->
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label for="reg-pass-confirm">Confirmar Password</label>
+                  <label for="regPassConfirm">Confirmar Password</label>
                   <input class="form-control" type="password" id="reg-pass-confirm" required>
                 </div>
               </div>
               <div class="col-12 text-center text-sm-right">
-                <button class="btn btn-primary margin-bottom-none" type="submit">Registrarse</button>
+                <button id="checkIn"class="btn btn-primary margin-bottom-none" type="button" id="checkIn" disabled>Registrarse</button>
               </div>
             </form>
           </div>
         </div>
       </div>
+
+
+<!--Modal de validacion de Datos tegistracion-->
+<div id="openModal" class="modal fade show " id="modalCentered" tabindex="-1" role="dialog" style="padding-right: 17px;" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Validaciones Realizadas</h4>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" onclick="javascript:CloseModal();">×</span></button>
+      </div>
+      <div id="divReportValidations" class="modal-body">
+        <!--<p id="reportValidations"></p>-->
+      </div>
+      <div class="modal-footer">
+        <!--<button class="btn btn-outline-secondary btn-sm" type="button" data-dismiss="modal">Close</button>-->
+        <button class="btn btn-primary btn-sm" type="button" onclick="javascript:CloseModal();">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
       <!-- Site Footer-->
       <footer class="site-footer">
         <div class="container">

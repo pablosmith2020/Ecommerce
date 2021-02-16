@@ -20,3 +20,8 @@ class User {
 /*Instancio y Ingreso Valores al Objeto User para poder validar y Emular respuesta del Backend */
 const ActiveUser = new User("Pablo", "Smith", "pablomsmith@hotmal.com", "1123565656", "1125632547", "Password1234", 1, 25620)
 
+/*Credenciales a Utilizar para Poder Ingresar
+
+Email= pablomsmith@hotmal.com
+Pass=  Password1234
+*/
