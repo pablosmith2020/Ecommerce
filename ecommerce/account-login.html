@@ -546,25 +546,8 @@
                 <li><a href="#"> <i class="icon-unlock"></i>Logout</a></li>
               </ul>
             </div>
-            <div class="cart"><a href="cart.html"></a><i class="icon-bag"></i><span class="count">3</span><span class="subtotal">$289.68</span>
-              <div class="toolbar-dropdown">
-                <div class="dropdown-product-item"><span class="dropdown-product-remove"><i class="icon-cross"></i></span><a class="dropdown-product-thumb" href="shop-single.html"><img src="img/cart-dropdown/01.jpg" alt="Product"></a>
-                  <div class="dropdown-product-info"><a class="dropdown-product-title" href="shop-single.html">Zapatillas Adidas</a><span class="dropdown-product-details">1 x $43.90</span></div>
-                </div>
-                <div class="dropdown-product-item"><span class="dropdown-product-remove"><i class="icon-cross"></i></span><a class="dropdown-product-thumb" href="shop-single.html"><img src="img/cart-dropdown/02.jpg" alt="Product"></a>
-                  <div class="dropdown-product-info"><a class="dropdown-product-title" href="shop-single.html">Gorra Deportiva</a><span class="dropdown-product-details">2 x $24.89</span></div>
-                </div>
-                <div class="dropdown-product-item"><span class="dropdown-product-remove"><i class="icon-cross"></i></span><a class="dropdown-product-thumb" href="shop-single.html"><img src="img/cart-dropdown/03.jpg" alt="Product"></a>
-                  <div class="dropdown-product-info"><a class="dropdown-product-title" href="shop-single.html">Cartera Ugart</a><span class="dropdown-product-details">1 x $200.00</span></div>
-                </div>
-                <div class="toolbar-dropdown-group">
-                  <div class="column"><span class="text-lg">Total:</span></div>
-                  <div class="column text-right"><span class="text-lg text-medium">$289.68&nbsp;</span></div>
-                </div>
-                <div class="toolbar-dropdown-group">
-                  <div class="column"><a class="btn btn-sm btn-block btn-secondary" href="cart.html">Mi Carrito</a></div>
-                  <div class="column"><a class="btn btn-sm btn-block btn-success" href="checkout-address.html">Comprar</a></div>
-                </div>
+            <div class="cart"><a id="BtnHeaderCart" href="cart.html"></a><i class="icon-bag"></i><span id="CountProductCart" class="count"></span><span id="TotalPurchaseCart" class="subtotal"></span>
+              <div class="toolbar-dropdown" id="ShoppingToolbar-dropdown" >
               </div>
             </div>
           </div>
@@ -701,8 +684,8 @@
       </div>
 
 
-<!--Modal de validacion de Datos tegistracion-->
-<div id="openModal" class="modal fade show " id="modalCentered" tabindex="-1" role="dialog" style="padding-right: 17px;" aria-modal="true">
+<!--Modal de validacion de Datos Registracion-->
+<div id="openModalErrorregistration" class="modal fade show " id="modalCentered" tabindex="-1" role="dialog" style="padding-right: 17px;" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
