@@ -4,6 +4,11 @@ let rememberUser = false;
 let arrayErrorCheckIn = []
 let arrayErrorPasswordFormat = []
 
+
+/* ----------------------------------- Evento Global de Todas las Paginas ------------------------------*/
+//window.addEventListener('load', LoadPage)
+$(document).ready(LoadPage)
+
 //////////////////////////////////////////////////////Funciones Globales/////////////////////////////////////////////////////////
 function crearNodos(tipoElemento, boleanTexto, textoElemento, nodoPadreParam, boleanAtributo, atributo) {
     let nuevoNodo = document.createElement(tipoElemento) //crea nodo ELEMENTO
@@ -34,35 +39,43 @@ function eliminarNodos(nodoPadre, nodoHijo) {
 }
 
 function validateEmail(e) {
-    /*console.log("Invocado del elemento HTML : " + e.target.id)*/
     if (this.value != "") {
         let re = /^([\da-z_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
         if (!re.exec(this.value)) {
             /*Reutilizo la Funcion para dos componentes input del mismo tipo(email) en el mismo HTML*/
             switch (e.target.id) {
                 case "useremailLogin":
-                    this.value = ""
-                    this.setAttribute("placeholder", "Formato Email Incorrecto")
-                    this.setAttribute("style", "border-color:red")
+                    $("#useremailLogin").attr({
+                        placeholder: "Formato Email Incorrecto",
+                        style: "border-color:red"
+                    });
+                    $("#useremailLogin").val("")
+                    $("#btnUserLogin").attr('disabled', 'disabled');
                     break
                 case "reg-email":
                     /*desarrollar los cambios de este input */
-                    this.value = ""
-                    this.setAttribute("placeholder", "Formato Email Incorrecto")
-                    this.setAttribute("style", "border-color:red")
+                    $("#reg-email").attr({
+                        placeholder: "Formato Email Incorrecto",
+                        style: "border-color:red"
+                    });
+                    $("#reg-email").val("");
                     break
             }
         } else {
             switch (e.target.id) {
                 case "useremailLogin":
-                    this.setAttribute("placeholder", "Email")
-                    this.setAttribute("style", "border-color:#dbe2e8")
+                    $("#useremailLogin").attr({
+                        placeholder: "Email",
+                        style: "border-color:#dbe2e8"
+                    });
                     activateBtnLogin()
                     break
                 case "reg-email":
                     /*desarrollar los cambios de este input */
-                    this.setAttribute("placeholder", "Email")
-                    this.setAttribute("style", "border-color:#dbe2e8")
+                    $("#reg-email").attr({
+                        placeholder: "Email",
+                        style: "border-color:#dbe2e8"
+                    });
                     activateBtnCheckIn()
                     break
             }
@@ -71,68 +84,58 @@ function validateEmail(e) {
 }
 /////////////////////////////////////////////////////Funciones de Gestion de Usuario/////////////////////////////////////////////////////////
 function validateLogin() {
-    let email = document.getElementById("useremailLogin")
-    let pass = document.getElementById("userPassLogin")
-    if (pass.value.trim() == " ") {
-        pass.value = ""
-        pass.setAttribute("placeholder", "Ingrese Nuevamente su Password")
-        pass.setAttribute("style", "border-color:red")
+    if ($("#userPassLogin").val() == "") {
+        $("#userPassLogin").attr({
+            placeholder: "Ingrese  su Password",
+            style: "border-color:red"
+        });
+        $("#msgErrorLogin").remove()
     } else {
-        if ((email.value == ActiveUser.email) && (pass.value == ActiveUser.password)) {
-            pass.setAttribute("placeholder", "Password")
-            pass.setAttribute("style", "border-color:#dbe2e8")
+        if (($("#useremailLogin").val() == ActiveUser.email) && ($("#userPassLogin").val() == ActiveUser.password)) {
+            $("#userPassLogin").attr({
+                placeholder: "Password",
+                style: "border-color:#dbe2e8"
+            });
             if (rememberUser) {
+                ActiveUser.loggedIn = true
                 saveStorageUser()
-                window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html"
+                activeMenuAccountHeader()
+                //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html" -------------luego dejar est re direccion
             } else {
-                localStorage.clear()
-                window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html"
+                ActiveUser.loggedIn = true
+                activeMenuAccountHeader()
+                //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html"
             }
+            resetControlEmail()
+            resetControlPass()
         } else {
             /*Visualizo el Error ademas de ver que No exista ya creado */
-            let nodoPadre = document.getElementById("viewErrorLogin")
-
-            if (!document.getElementById("mensajeError")) {
-
-                let nuevoNodo = document.createElement("p")
-                let nodoUsuarioTexto = document.createTextNode("Usuario o Password Incorrectos, por favor pruebe nuevamente.")
-                nuevoNodo.appendChild(nodoUsuarioTexto)
-                document.getElementById("viewErrorLogin").appendChild(nuevoNodo)
-                nuevoNodo.setAttribute("id", "mensajeError")
-                nuevoNodo.setAttribute("class", "text-danger")
-            }
+            $("#viewErrorLogin").append('<p id="msgErrorLogin" class="text-danger">Usuario o Password Incorrectos, por favor pruebe nuevamente.</p>')
         }
     }
 }
 
 function resetControlEmail() {
-
-    let email = document.getElementById("useremailLogin")
-    let nodoPadre = document.getElementById("viewErrorLogin")
-    email.setAttribute("placeholder", "Email")
-    email.setAttribute("style", "border-color:#dbe2e8")
-    email.value = ""
-    if (document.getElementById("mensajeError")) {
-        let nodohijo = document.getElementById("mensajeError")
-        nodoPadre.removeChild(nodohijo)
-    }
+    $("#useremailLogin").attr({
+        placeholder: "Email",
+        style: "border-color:#dbe2e8"
+    });
+    $("#useremailLogin").val("")
+    $("#msgErrorLogin").remove()
 }
 
 function resetControlPass() {
-    let pass = document.getElementById("userPassLogin")
-    let nodoPadre = document.getElementById("viewErrorLogin")
-    pass.setAttribute("placeholder", "Password")
-    pass.setAttribute("style", "border-color:#dbe2e8")
-    pass.value = ""
-    if (document.getElementById("mensajeError")) {
-        let nodohijo = document.getElementById("mensajeError")
-        nodoPadre.removeChild(nodohijo)
-    }
+    $("#userPassLogin").attr({
+        placeholder: "Email",
+        style: "border-color:#dbe2e8"
+    });
+    $("#userPassLogin").val("")
+    $("#msgErrorLogin").remove()
 }
 
 function saveStorageUser() {
     /*Guarado la Informacion  en el Storage para luego utilizarla*/
-    localStorage.setItem("User", JSON.stringify(ActiveUser))
+    sessionStorage.setItem("User", JSON.stringify(ActiveUser))
 }
 
 function validateRemeberUser() {
@@ -144,57 +147,42 @@ function validateRemeberUser() {
 }
 
 function activateBtnLogin() {
-    /* Quito la propiedad para poder volver a activar el boton */
-    let btnIngresar = document.getElementById("btnUserLogin")
-    btnIngresar.removeAttribute('disabled')
+    $("#btnUserLogin").removeAttr("disabled")
 }
 
 function activateBtnCheckIn() {
-    let btnIngresar = document.getElementById("checkIn")
-    btnIngresar.removeAttribute('disabled')
+    $("#checkIn").removeAttr("disabled")
 }
 
 function validateResgistrationForm() {
-
-    let name = document.getElementById("regName").value
-    let lastName = document.getElementById("regLastName").value
-    let email = document.getElementById("reg-email").value
-    let province = document.getElementById("regProvince")
-    let textSelected = province.options[province.selectedIndex].text
-    let codSelected = document.getElementById("regProvince").value
-    let cel = document.getElementById("reg-phone").value
-    let privatePhone = document.getElementById("reg-phone-private").value
-    let pass = document.getElementById("reg-pass").value
-    let passConfirm = document.getElementById("reg-pass-confirm").value
-
-    if (name == "") {
+    if ($("#regName").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar sus Nombres ")
     }
-    if (lastName == "") {
+    if ($("#regLastName").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar su Apellido")
     }
-    if (email == "") {
+    if ($("#reg-email").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar su Email ")
     }
-    if (codSelected == 0) {
+    if ($("#regProvince").val() == 0) {
         arrayErrorCheckIn.push("-Debe Seleccionar una Provincia")
     }
-    if (cel == "") {
+    if ($("#reg-phone").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar su Numero Celular ")
     }
-    if (privatePhone == "") {
+    if ($("#reg-phone-private").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar su Telefono Particular ")
     }
-    if (pass == "") {
+    if ($("#reg-pass").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar una Password ")
     }
-    if (passConfirm == "") {
+    if ($("#reg-pass-confirm").val() == "") {
         arrayErrorCheckIn.push("-Debe Ingresar  el campo Confirmar Password ")
     } else {
-        if (pass.trim() != passConfirm.trim()) {
+        if ($("#reg-pass").val().trim() != $("#reg-pass-confirm").val().trim()) {
             arrayErrorCheckIn.push("-Las Password NO Coinciden, por favor ingreselas nuevamente ! ")
         } else {
-            if (!validar_clave(pass)) {
+            if (!validatePassword($("#reg-pass").val())) {
                 arrayErrorPasswordFormat.push(" La Password debe contener las siguentes caracteristicas: ")
                 arrayErrorPasswordFormat.push("-Tiene ocho caracteres como mínimo.")
                 arrayErrorPasswordFormat.push("-Letras mayúsculas.")
@@ -207,34 +195,75 @@ function validateResgistrationForm() {
     if (arrayErrorCheckIn != "") {
         /*Generar el  Contenido para visualziar los errores de todos los campos*/
         for (i = 0; i < arrayErrorCheckIn.length; i++) {
-
-            let nuevoNodo = document.createElement("p")
-            let nodoUsuarioTexto = document.createTextNode(arrayErrorCheckIn[i])
-            nuevoNodo.appendChild(nodoUsuarioTexto)
-            document.getElementById("divReportValidations").appendChild(nuevoNodo)
-            nuevoNodo.setAttribute("class", "text-danger")
-            nuevoNodo.setAttribute("id", "reportValidations" + [i])
+            $("#divReportValidations").append('<p id="reportValidations' + [i] + '"' + ' class="text-danger">' + arrayErrorCheckIn[i] + '</p>')
         }
         showModal()
-
     } else {
         /*Generar el  Contenido para visualziar los errores del Formato de la Password*/
         if (arrayErrorPasswordFormat != "") {
             for (i = 0; i < arrayErrorPasswordFormat.length; i++) {
-                let nuevoNodo = document.createElement("p")
-                let nodoUsuarioTexto = document.createTextNode(arrayErrorPasswordFormat[i])
-                nuevoNodo.appendChild(nodoUsuarioTexto)
-                document.getElementById("divReportValidations").appendChild(nuevoNodo)
-                nuevoNodo.setAttribute("class", "text-danger")
-                nuevoNodo.setAttribute("id", "reportValidations" + [i])
+                $("#divReportValidations").append('<p id="reportValidations' + [i] + '"' + ' class="text-danger">' + arrayErrorPasswordFormat[i] + '</p>')
             }
             showModal()
         } else {
             /*Cargo el nuevo usuario Como Objeto*/
-            const ActiveUser = new User(name, lastName, email, cel, privatePhone, pass, province, 0)
+            const ActiveUser = new User($("#regName").val(), $("#regLastName").val(), $("#reg-email").val(), $("#reg-phone").val(), $("#reg-phone-private").val(), $("#reg-pass").val(), $("#regProvince").val(), 0)
             saveNewUser(ActiveUser)
+            ResetControlerRegistration()
+            loginOkRegistration()
         }
     }
+}
+
+function ResetControlerRegistration() {
+    $("#regName").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#regName").val("");
+
+    $("#regLastName").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#regLastName").val("")
+
+    $("#reg-email").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#reg-email").val("")
+
+    $("#reg-regProvince").attr({
+        style: "border-color:#dbe2e8"
+    });
+    //Dejo opcion e Select seteada
+    $("#regProvince").val(0)
+
+    $("#reg-phone").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#reg-phone").val("")
+
+    $("#reg-phone-private").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#reg-phone-private").val("")
+
+    $("#reg-pass").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#reg-pass").val("")
+
+    $("#reg-pass-confirm").attr({
+        style: "border-color:#dbe2e8"
+    });
+    $("#reg-pass-confirm").val("")
+}
+
+function loginOkRegistration() {
+    $("#useremailLogin").val(ActiveUser.email);
+    $("#userPassLogin").attr({
+        style: "border-color:red"
+    });
+    $("#btnUserLogin").removeAttr("disabled")
 }
 
 function saveNewUser(newUser) {
@@ -242,13 +271,12 @@ function saveNewUser(newUser) {
     console.log(newUser)
 }
 
-function validar_clave(contrasenna) {
+function validatePassword(contrasenna) {
     if (contrasenna.length >= 8) {
         var mayuscula = false;
         var minuscula = false;
         var numero = false;
         var caracter_raro = false;
-
         for (var i = 0; i < contrasenna.length; i++) {
             if (contrasenna.charCodeAt(i) >= 65 && contrasenna.charCodeAt(i) <= 90) {
                 mayuscula = true;
@@ -266,27 +294,17 @@ function validar_clave(contrasenna) {
     }
     return false;
 }
+
 function showModal() {
     /*Manejo de Modal de Errores*/
-    document.getElementById('openModalErrorregistration').style.display = 'block';
+    $("#openModalErrorregistration").show()
 }
 
 function CloseModal() {
-    document.getElementById('openModalErrorregistration').style.display = 'none';
-    let nodoPadre = document.getElementById("divReportValidations")
-    /*Elimino las Etiquetas <P> creadas para ambos Tipos de Error*/
-    if (arrayErrorCheckIn != "") {
-        for (i = 0; i < arrayErrorCheckIn.length; i++) {
-            let nodohijo = document.getElementById("reportValidations" + i)
-            nodoPadre.removeChild(nodohijo)
-        }
-    }
-    if (arrayErrorPasswordFormat != "") {
-        for (i = 0; i < arrayErrorPasswordFormat.length; i++) {
-            let nodohijo = document.getElementById("reportValidations" + i)
-            nodoPadre.removeChild(nodohijo)
-        }
-    }
+    $("#openModalErrorregistration").hide()
+
+    //Elimino las Etiquetas <P> creadas para ambos Tipos de Error, buscandolas por clase
+    $(".text-danger").remove()
     /*Elimino los elementos de los ArrayS*/
     while (arrayErrorCheckIn.length) {
         arrayErrorCheckIn.pop();
@@ -294,36 +312,39 @@ function CloseModal() {
     while (arrayErrorPasswordFormat.length) {
         arrayErrorPasswordFormat.pop();
     }
-
-
-    /*    arrayErrorCheckIn.length = 0;
-        arrayErrorPasswordFormat=0;*/
 }
 
+function activeMenuAccountHeader() {
+    if (ActiveUser.loggedIn) {
+        //Elimino Icono en Header
+        $("#IconAccountHeader").remove()
+        //Cargo la Foto la foto
+        if (document.getElementById("ImgPhoto")) {} else {
+            $("#ImgAccount").append('<img class="rounded-circle" src=' + ActiveUser.photo + ' id="ImgPhoto"></img>')
+        }
+        $("#MenuAccount").attr("style", "block");
+    } else {
+        $("#MenuAccount").hide();
+        if ($("ImgPhoto")) {
+            $("#ImgAccount img:last-child").remove()
+            $(".user-ava").remove()
+        }
+        $("#ImgAccount").append('<a href="account-login.html"></a>')
+        $("#ImgAccount").append('<i href="/account-login.html" class="icon-head" id="IconAccountHeader"></i>')
+    }
+}
 
-/*--------------------------------------------Nuevo Eventos para el Login----------------------------------*/
-/* Genero el Evento de validacion de email si el mismo esta cargado */
-document.getElementById("useremailLogin").addEventListener("blur", validateEmail)
-document.getElementById("useremailLogin").addEventListener("click", resetControlEmail)
-/* Genero el Evento de ingreso con email y Password */
-document.getElementById("btnUserLogin").addEventListener("click", validateLogin)
-/* Genero el Evento Input Pass para resetearlo en caso de error */
-document.getElementById("userPassLogin").addEventListener("click", resetControlPass)
-/*Genero el Evento de seteo de recordar Usuarioy guardo el valor en una variable*/
-document.getElementById("remember_me").addEventListener("change", validateRemeberUser)
-/* -----------------------------------Nuevos Eventos para Resgistracion--------------------------------------*/
-/* Genero el Evento de validacion de email si el mismo esta cargado */
-document.getElementById("reg-email").addEventListener("blur", validateEmail)
-document.getElementById("checkIn").addEventListener("click", validateResgistrationForm)
+function logoutFunction() {
+    ActiveUser.loggedIn = false
+    activeMenuAccountHeader()
+    saveStorageUser()
+}
 
 
 ///////////////////////////////////////////////////Funciones de Carrito/////////////////////////////////////////////////////////
 function removeElementCart(idArrayPositionDelete, idDivElement) {
-
     let objectCartCurrent = localStorage.getItem('ShoppingCart');
     let shoppingCartCurrent = JSON.parse(objectCartCurrent);
-    let elementDelete = document.getElementById("divThird-" + idDivElement)
-    let footerDelete = document.getElementById("ShoppingToolbar-dropdown")
     let positionDelete = 0
 
     for (let i = 0; i < shoppingCartCurrent.length; i++) {
@@ -331,38 +352,33 @@ function removeElementCart(idArrayPositionDelete, idDivElement) {
             positionDelete = i
         }
     }
-
     //Elimino del Array el Producto deseado 
     shoppingCartCurrent.splice(positionDelete, 1)
     //valido si el array esta vacio elimino el objeto del Storage
     if (shoppingCartCurrent.length > 0) {
         localStorage.setItem("ShoppingCart", JSON.stringify(shoppingCartCurrent))
-        elementDelete.style.display = "none"
+        $("#divThird-" + idDivElement).hide()
         CalcAmountPurchaseHeaderCart(shoppingCartCurrent)
         CalcAmountPurchaseFooterCart(shoppingCartCurrent)
     } else {
         localStorage.removeItem("ShoppingCart")
         //Oculto Elemento Footer del Div 
-        footerDelete.style.display = "none"
+        $("#ShoppingToolbar-dropdown").hide()
         //Seteo los Valores del Header del Carrito
         CalcAmountPurchaseHeaderCart(shoppingCartCurrent)
     }
-
 }
-function BtnsHeaderCartMenu(count, amount) {
-    let countElement = document.getElementById("CountProductCart")
-    let amountElelemnt = document.getElementById("TotalPurchaseCart")
-    let BtnHeaderCart = document.getElementById("BtnHeaderCart")
 
-    countElement.textContent = count
-    amountElelemnt.textContent = amount
+function BtnsHeaderCartMenu(count, amount) {
+    $("#CountProductCart").text(count)
+    $("#TotalPurchaseCart").text(amount)
     //Si esta vacio quito el  href
     if (count == 0) {
-        BtnHeaderCart.href = "#"
+        $("#BtnHeaderCart").attr("href", "#")
     }
 }
+
 function CalcAmountPurchaseFooterCart(shoppingCartCurrent) {
-    let elemtChange = document.getElementById("strongValor")
     let sumaParcial = ""
     let total = 0
     let i = 0
@@ -371,8 +387,9 @@ function CalcAmountPurchaseFooterCart(shoppingCartCurrent) {
         sumaParcial = parseFloat(shoppingCartCurrent[i].amount) * parseFloat(shoppingCartCurrent[i].price)
         total = parseFloat(total) + parseFloat(sumaParcial)
     }
-    elemtChange.textContent = total
+    $("#spanPrecio").text(total)
 }
+
 function CalcAmountPurchaseHeaderCart(shoppingCartCurrent) {
     let sumaParcial = ""
     let total = 0
@@ -385,161 +402,140 @@ function CalcAmountPurchaseHeaderCart(shoppingCartCurrent) {
     //Precargo el valor del Boton Encabezado del Carrito
     BtnsHeaderCartMenu(i, total)
 }
-function loadShoppingcart() {
 
+function loadShoppingcart() {
     /*Busco Informacion de productos Guardados en el carrito por parte del Usuario */
     let objectCartCurrent = localStorage.getItem('ShoppingCart');
     /*Parseo el Objeto obtenido del Storage */
     let shoppingCartCurrent = JSON.parse(objectCartCurrent);
-    let nodoPadre = "ShoppingToolbar-dropdown"
-    let atrMap = new Map;
+
     let sumaParcial = ""
     let total = 0
 
-
     for (let i = 0; i < shoppingCartCurrent.length; i++) {
-        //<div>
-        atrMap.clear()
-        atrMap.set("id", "divThird-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-item")
-        /*Creo el nuevo Elemento HTML */
-        crearNodos("div", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-
-        //<span>
-        atrMap.clear()
-        atrMap.set("id", "spanFirst-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-remove")
-        //atrMap.set("onclick", "removeElementCart(" + shoppingCartCurrent[i].id + ")")
-        atrMap.set("onclick", "removeElementCart(" + i + "," + shoppingCartCurrent[i].id + ")")
-        crearNodos("span", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-        //<i>
-        atrMap.clear()
-        atrMap.set("id", "i-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "icon-cross")
-        crearNodos("i", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-        anidarNodos("spanFirst-" + shoppingCartCurrent[i].id, "i-" + shoppingCartCurrent[i].id)
-        //<a>
-        atrMap.clear()
-        atrMap.set("id", "aSecond-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-thumb")
-        atrMap.set("href", "shop-single.html")
-        crearNodos("a", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-        //<img>
-        atrMap.clear()
-        atrMap.set("id", "img-" + shoppingCartCurrent[i].id)
-        //---------------------------------------------cambiar el seteo de imagenes !!
-        atrMap.set("src", "img/cart-dropdown/0" + i + ".jpg")
-        atrMap.set("alt", "Product")
-        crearNodos("img", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-        anidarNodos("aSecond-" + shoppingCartCurrent[i].id, "img-" + shoppingCartCurrent[i].id)
-        //<a>
-        atrMap.clear()
-        atrMap.set("id", "aFirst-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-title")
-        atrMap.set("href", "shop-single.html")
-        crearNodos("a", true, shoppingCartCurrent[i].description, "ShoppingToolbar-dropdown", true, atrMap)
-        //<span>
-        atrMap.clear()
-        atrMap.set("id", "spanLast-" + shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-details")
-        crearNodos("span", true, shoppingCartCurrent[i].amount + " x " + "$" + shoppingCartCurrent[i].price, "ShoppingToolbar-dropdown", true, atrMap)
-        //<div>
-        atrMap.clear()
-        atrMap.set("id", "div-" + +shoppingCartCurrent[i].id)
-        atrMap.set("class", "dropdown-product-info")
-        crearNodos("div", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-        //creo Estructura
-        anidarNodos("div-" + +shoppingCartCurrent[i].id, "aFirst-" + shoppingCartCurrent[i].id)
-        anidarNodos("div-" + shoppingCartCurrent[i].id, "spanLast-" + shoppingCartCurrent[i].id)
-        anidarNodos("divThird-" + shoppingCartCurrent[i].id, "spanFirst-" + shoppingCartCurrent[i].id)
-        anidarNodos("divThird-" + shoppingCartCurrent[i].id, "aSecond-" + shoppingCartCurrent[i].id)
-        anidarNodos("divThird-" + shoppingCartCurrent[i].id, "aSecond-" + shoppingCartCurrent[i].id)
-        anidarNodos("divThird-" + shoppingCartCurrent[i].id, "aSecond-" + shoppingCartCurrent[i].id)
-        anidarNodos("divThird-" + shoppingCartCurrent[i].id, "div-" + +shoppingCartCurrent[i].id)
-
+        $("#ShoppingToolbar-dropdown").append(
+            $('<div/>', {
+                id: 'divThird-' + shoppingCartCurrent[i].id,
+                'class': 'dropdown-product-item'
+            }).append(
+                $('<span/>', {
+                    id: 'spanFirst-' + shoppingCartCurrent[i].id,
+                    'class': 'dropdown-product-remove',
+                    'onclick': "removeElementCart(" + i + "," + shoppingCartCurrent[i].id + ")"
+                }).append(
+                    $('<i/>', {
+                        id: 'i-' + shoppingCartCurrent[i].id,
+                        'class': 'icon-cross'
+                    })
+                )
+            )
+        )
+        $('#' + 'divThird-' + shoppingCartCurrent[i].id).append(
+            $('<a/>', {
+                id: 'aSecond-' + shoppingCartCurrent[i].id,
+                class: 'dropdown-product-thumb',
+                href: 'shop-single.html' //Hacer dinamico el producto
+            }).append(
+                $('<img/>', {
+                    id: 'img-' + shoppingCartCurrent[i].id,
+                    src: "img/cart-dropdown/0" + i + ".jpg", //Hacer dinamico las imagenes
+                    alt: 'Imagen Producto'
+                })
+            )
+        )
+        $('#' + 'divThird-' + shoppingCartCurrent[i].id).append(
+            $('<div/>', {
+                id: 'div-' + shoppingCartCurrent[i].id,
+                class: 'dropdown-product-info'
+            }).append(
+                $('<a/>', {
+                    id: 'aFirst-' + shoppingCartCurrent[i].id,
+                    class: 'dropdown-product-title',
+                    href: 'shop-single.html',
+                    text: shoppingCartCurrent[i].description
+                })
+            )
+        )
+        $('#' + 'divThird-' + shoppingCartCurrent[i].id).append(
+            $('<span/>', {
+                id: 'spanLast-' + shoppingCartCurrent[i].id,
+                class: 'dropdown-product-detailse',
+                text: shoppingCartCurrent[i].amount + " x " + "$" + shoppingCartCurrent[i].price
+            })
+        )
         sumaParcial = parseFloat(shoppingCartCurrent[i].amount) * parseFloat(shoppingCartCurrent[i].price)
         total = parseFloat(total) + parseFloat(sumaParcial)
     }
     //Cargo Boton Header Carrito
     CalcAmountPurchaseHeaderCart(shoppingCartCurrent)
-
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "divFooter")
-    atrMap.set("class", "toolbar-dropdown-group")
-    //Creo el nuevo Elemento HTML 
-    crearNodos("div", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "divTotal")
-    atrMap.set("class", "column")
-    crearNodos("div", false, "", "divFooter", true, atrMap)
-    //<span>
-    atrMap.clear()
-    atrMap.set("id", "spanTotal")
-    atrMap.set("class", "text-lg")
-    crearNodos("span", true, "Total:", "divTotal", true, atrMap)
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "divPrecio")
-    atrMap.set("class", "column text-right")
-    crearNodos("div", false, "", "divFooter", true, atrMap)
-    //<span>
-    atrMap.clear()
-    atrMap.set("id", "spanPrecio")
-    atrMap.set("class", "text-lg text-medium")
-    crearNodos("span", false, "", "divPrecio", true, atrMap)
-    //<strong>
-    atrMap.clear()
-    atrMap.set("id", "strongValor")
-    crearNodos("strong", true, total, "spanPrecio", true, atrMap)
-    anidarNodos("divFooter", "divPrecio")
-
-    //Botones
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "BtnHeader")
-    atrMap.set("class", "toolbar-dropdown-group")
-    crearNodos("div", false, "", "ShoppingToolbar-dropdown", true, atrMap)
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "BtnHeader2")
-    atrMap.set("class", "column")
-    crearNodos("div", false, "", "BtnHeader", true, atrMap)
-    //<a>
-    atrMap.clear()
-    atrMap.set("id", "BtnHeaderCart")
-    atrMap.set("class", "btn btn-sm btn-block btn-secondary")
-    atrMap.set("href", "cart.html")
-    crearNodos("a", true, "Mi Carrito", "BtnHeader2", true, atrMap)
-    //<div>
-    atrMap.clear()
-    atrMap.set("id", "BtnHeader3")
-    atrMap.set("class", "column")
-    crearNodos("div", false, "", "BtnHeader", true, atrMap)
-    //<a>
-    atrMap.clear()
-    atrMap.set("id", "BtnHeaderCart2")
-    atrMap.set("class", "btn btn-sm btn-block btn-success")
-    atrMap.set("href", "checkout-address.html")
-    crearNodos("a", true, "Comprar", "BtnHeader2", true, atrMap)
-    anidarNodos("BtnHeader3", "BtnHeaderCart2")
-
+    $("#ShoppingToolbar-dropdown").append(
+        $('<div>', {
+            id: 'divFooter',
+            'class': 'toolbar-dropdown-group'
+        }).append(
+            $('<div>', {
+                id: 'divTotal',
+                class: 'column'
+            }).append(
+                $('<span/>', {
+                    id: 'spanTotal',
+                    class: 'text-lg',
+                    text: 'Total:'
+                })
+            ))
+    )
+    $("#divFooter").append(
+        $('<div/>', {
+            id: 'divPrecio',
+            'class': 'column text-right'
+        }).append(
+            $('<span/>', {
+                id: 'spanPrecio',
+                class: 'text-lg text-medium',
+                text: total
+            })
+        )
+    )
+    //Botones Footer
+    $("#ShoppingToolbar-dropdown").append(
+        $('<div/>', {
+            id: 'BtnHeader',
+            'class': 'toolbar-dropdown-group'
+        })
+    )
+    $("#BtnHeader").append(
+        $('<div/>', {
+            id: 'divFooter1',
+            'class': 'column'
+        }).append(
+            $('<a/>', {
+                id: 'BtnHeaderCart',
+                'class': 'btn btn-sm btn-block btn-secondary',
+                href: 'cart.html',
+                text: 'Mi Carrito'
+            })
+        ))
+    $("#BtnHeader").append(
+        $('<div/>', {
+            id: 'divFooter2',
+            'class': 'column'
+        }).append(
+            $('<a/>', {
+                id: 'BtnHeaderCart2',
+                'class': 'btn btn-sm btn-block btn-success',
+                href: 'checkout-address.html',
+                text: 'Comprar'
+            }))
+    )
 }
-
-
 ////////////////////////////////////////////////////Funciones de carga /////////////////////////////////////////////////////////
 
 function LoadPage() {
-
+    // Funciones de Carrito
     if ((localStorage.getItem('ShoppingCart') != "") || (localStorage.getItem('ShoppingCart') != null)) {
         //Genero Estructura de Carrito en Header
         loadShoppingcart()
-
-
     }
+    //Funciones de Sesion de Usuario
+    activeMenuAccountHeader()
 }
-
-
-/* ----------------------------------- Evento para la Carga de la Pagina ------------------------------*/
-window.addEventListener('load', LoadPage)

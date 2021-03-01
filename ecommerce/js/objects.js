@@ -1,5 +1,5 @@
 class User {
-    constructor(firstname, lastname, email, celnumber, privatenumber, password, province, rewardpoints) {
+    constructor(firstname, lastname, email, celnumber, privatenumber, password, province, rewardpoints,loggedIn,photo) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -8,6 +8,8 @@ class User {
         this.password = password;
         this.province = province
         this.rewardpoints = rewardpoints;
+        this.loggedIn=loggedIn;
+        this.photo=photo
     }
 
     encryptPass(password) {
@@ -18,7 +20,7 @@ class User {
 }
 
 /*Instancio y Ingreso Valores al Objeto User para poder validar y Emular respuesta del Backend */
-var ActiveUser = new User("Pablo", "Smith", "pablomsmith@hotmal.com", "1123565656", "1125632547", "Password1234", 1, 25620)
+var ActiveUser = new User("Pablo", "Smith", "pablomsmith@hotmal.com", "1123565656", "1125632547", "Password1234", false, 25620,false,"img/account/user-ava-sm.jpg")
 
 /*Credenciales a Utilizar para Poder Ingresar
 
