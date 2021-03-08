@@ -1,15 +1,33 @@
+var ActiveUser;
+var UserDirection;
+
+
+class Direction {
+    constructor(street, number, province, city, zipCode,state, latitude, longitude,typeDirection) {
+        this.street = street;
+        this.number=number;
+        this.province=province;
+        this.city=city;
+        this.zipCode=zipCode;
+        this.state=state;
+        this.latitude=latitude;
+        this.longitude=longitude;
+        this.typeDirection=typeDirection;
+    }
+}
+
 class User {
-    constructor(firstname, lastname, email, celnumber, privatenumber, password, province, rewardpoints,loggedIn,photo) {
+    constructor(firstname, lastname, email, celnumber, privatenumber, password, direction, rewardpoints, loggedIn, photo) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.celnumber = celnumber;
         this.privatenumber = privatenumber
         this.password = password;
-        this.province = province
+        this.direction = direction;
         this.rewardpoints = rewardpoints;
-        this.loggedIn=loggedIn;
-        this.photo=photo
+        this.loggedIn = loggedIn;
+        this.photo = photo
     }
 
     encryptPass(password) {
@@ -20,7 +38,18 @@ class User {
 }
 
 /*Instancio y Ingreso Valores al Objeto User para poder validar y Emular respuesta del Backend */
-var ActiveUser = new User("Pablo", "Smith", "pablomsmith@hotmal.com", "1123565656", "1125632547", "Password1234", false, 25620,false,"img/account/user-ava-sm.jpg")
+
+//alert("evaluo")
+//console.log(sessionStorage.getItem('User'))
+
+UserDirection= new Direction("colon",3532,"Buenos Aires","Lomas del Mirador","1752","La Matanza","-34.6683937","-58.528612","Calle")
+
+if (sessionStorage.getItem('User') == "" || sessionStorage.getItem('User') == null) {
+
+    ActiveUser = new User("Pablo", "Smith", "pablomsmith@hotmal.com", "1123565656", "1125632547",  "Password1234",UserDirection,  25620, false, "img/account/user-ava-sm.jpg")
+
+}
+
 
 /*Credenciales a Utilizar para Poder Ingresar
 

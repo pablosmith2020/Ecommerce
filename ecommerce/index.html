@@ -504,8 +504,11 @@
         <div class="inner">
           <div class="tools">
             <div class="search"><i class="icon-search"></i></div>
-            <div class="account"><a href="account-orders.html"></a><i class="icon-head"></i>
-              <ul class="toolbar-dropdown">
+            <div id="ImgAccount" class="account">
+              <a href="#"></a>
+              <!-- <img  class="rounded-circle" src="img/account/user-ava-sm.jpg"><a href="account-orders.html"></a>
+                <i class="icon-head">-->
+              <ul id="MenuAccount" class="toolbar-dropdown">
                 <li class="sub-menu-user">
                   <div class="user-ava"><img src="img/account/user-ava-sm.jpg" alt="Pablo Smith">
                   </div>
@@ -513,11 +516,11 @@
                     <h6 class="user-name">Pablo Smith</h6><span class="text-xs text-muted">290 Puntos Acumulados</span>
                   </div>
                 </li>
-                  <li><a href="account-profile.html">Mi Cuenta</a></li>
-                  <li><a href="account-orders.html">Lista de Pedidos</a></li>
-                  <li><a href="account-wishlist.html">Favoritos</a></li>
+                <li><a href="account-profile.html">Mi Cuenta</a></li>
+                <li><a href="account-orders.html">Lista de Pedidos</a></li>
+                <li><a href="account-wishlist.html">Favoritos</a></li>
                 <li class="sub-menu-separator"></li>
-                <li><a href="#"> <i class="icon-unlock"></i>Logout</a></li>
+                <li><a id="BtnLogout" href="#"> <i class="icon-unlock"></i>Logout</a></li>
               </ul>
             </div>
             <div class="cart"><a id="BtnHeaderCart" href="cart.html"></a><i class="icon-bag"></i><span id="CountProductCart" class="count"></span><span id="TotalPurchaseCart" class="subtotal"></span>
@@ -945,9 +948,10 @@
     <!-- Customizer scripts-->
     <script src="customizer/customizer.min.js"></script>
   <!-- Our scripts-->
+  <script src="jquery/jquery-3.5.1.min.js"></script>
   <script src="js/objects.js"></script>
   <script src="js/functions.js"></script>
-  </body>
+  <script src="js/event_Index.js"></script>
 
 <!-- Mirrored from themes.rokaux.com/unishop/v3.2.1/template-1/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 15 Dec 2020 14:44:56 GMT -->
 </html>

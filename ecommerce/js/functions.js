@@ -7,36 +7,9 @@ let arrayErrorPasswordFormat = []
 
 /* ----------------------------------- Evento Global de Todas las Paginas ------------------------------*/
 //window.addEventListener('load', LoadPage)
-$(document).ready(LoadPage)
+$(document).ready(LoadPages)
 
 //////////////////////////////////////////////////////Funciones Globales/////////////////////////////////////////////////////////
-function crearNodos(tipoElemento, boleanTexto, textoElemento, nodoPadreParam, boleanAtributo, atributo) {
-    let nuevoNodo = document.createElement(tipoElemento) //crea nodo ELEMENTO
-    if (boleanTexto == true) {
-        let nodoUsuarioTexto = document.createTextNode(textoElemento) //crea nodo TEXTO
-        nuevoNodo.appendChild(nodoUsuarioTexto)
-    }
-    if (boleanAtributo == true) {
-        let atribMap = atributo;
-        for (let [key, value] of atribMap) {
-            nuevoNodo.setAttribute(key, value)
-        }
-    }
-    document.getElementById(nodoPadreParam).appendChild(nuevoNodo)
-}
-
-function anidarNodos(nodoPadre, nodoHijo) {
-    let nodoHTMLPadre = document.getElementById(nodoPadre)
-    let nodoHTMLHijo = document.getElementById(nodoHijo)
-    // El primer parametro (nodo Padre) debe ser un String para conformar el lemento HTML, el segundo debe ser un objeto del tipo  HTMLElement
-    document.getElementById(nodoPadre).appendChild(nodoHTMLHijo)
-}
-
-function eliminarNodos(nodoPadre, nodoHijo) {
-    //ELIMINAR NODOS
-    //let nodoAEliminar = document.getElementById(hijo)
-    document.getElementById(nodoPadre).removeChild(nodoHijo)
-}
 
 function validateEmail(e) {
     if (this.value != "") {
@@ -96,12 +69,15 @@ function validateLogin() {
                 placeholder: "Password",
                 style: "border-color:#dbe2e8"
             });
-            if (rememberUser) {
+            if ($('#remember_me').is(':checked')) {
                 ActiveUser.loggedIn = true
                 saveStorageUser()
+                saveStoramail()
                 activeMenuAccountHeader()
                 //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html" -------------luego dejar est re direccion
             } else {
+                saveStorageUser()
+                deleteStoramail()
                 ActiveUser.loggedIn = true
                 activeMenuAccountHeader()
                 //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html"
@@ -126,7 +102,7 @@ function resetControlEmail() {
 
 function resetControlPass() {
     $("#userPassLogin").attr({
-        placeholder: "Email",
+        placeholder: "Password",
         style: "border-color:#dbe2e8"
     });
     $("#userPassLogin").val("")
@@ -138,11 +114,21 @@ function saveStorageUser() {
     sessionStorage.setItem("User", JSON.stringify(ActiveUser))
 }
 
+function saveStoramail() {
+    sessionStorage.setItem("Usermail", ActiveUser.email)
+}
+
+function deleteStoramail() {
+    sessionStorage.removeItem("Usermail")
+}
+
 function validateRemeberUser() {
     if (this.checked) {
-        rememberUser = true;
+        alert("guardar remeber")
+        //rememberUser = true;
     } else {
-        rememberUser = false;
+        alert("borrar remeber")
+        //rememberUser = false;
     }
 }
 
@@ -192,6 +178,24 @@ function validateResgistrationForm() {
             }
         }
     }
+    ////////////////////////////////////////////////////////
+
+    let response = grecaptcha.getResponse();
+    $.ajax({
+        type: "POST",
+        url: 'https://www.google.com/recaptcha/api/siteverify',
+        data: {
+            "secret": "(6LdayG4aAAAAAHPZGIr8UVPexeq2BCLSdveS7Q4q)",
+            "response": response,
+            "remoteip": "www.tcfautos.com.ar"
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        success: function (data) {
+            console.log(data);
+        }
+    });
+
+    ///////////////////////////////////////////////////////
     if (arrayErrorCheckIn != "") {
         /*Generar el  Contenido para visualziar los errores de todos los campos*/
         for (i = 0; i < arrayErrorCheckIn.length; i++) {
@@ -315,11 +319,13 @@ function CloseModal() {
 }
 
 function activeMenuAccountHeader() {
-    if (ActiveUser.loggedIn) {
+    if (sessionStorage.getItem('User')) {
+        ActiveUser = JSON.parse(sessionStorage.getItem('User'))
         //Elimino Icono en Header
         $("#IconAccountHeader").remove()
         //Cargo la Foto la foto
-        if (document.getElementById("ImgPhoto")) {} else {
+
+        if ($("#ImgPhoto").length > 0) {} else {
             $("#ImgAccount").append('<img class="rounded-circle" src=' + ActiveUser.photo + ' id="ImgPhoto"></img>')
         }
         $("#MenuAccount").attr("style", "block");
@@ -328,18 +334,27 @@ function activeMenuAccountHeader() {
         if ($("ImgPhoto")) {
             $("#ImgAccount img:last-child").remove()
             $(".user-ava").remove()
+            $("#ImgAccount").append('<a href="account-login.html"></a>')
+            $("#ImgAccount").append('<i href="/account-login.html" class="icon-head" id="IconAccountHeader"></i>')
         }
-        $("#ImgAccount").append('<a href="account-login.html"></a>')
-        $("#ImgAccount").append('<i href="/account-login.html" class="icon-head" id="IconAccountHeader"></i>')
+    }
+    if ((sessionStorage.getItem('Usermail') != "" || sessionStorage.getItem('Usermail') != null) && (sessionStorage.getItem('User') != "")) {
+        $("#useremailLogin").attr('value', sessionStorage.getItem('Usermail'))
+        $("#btnUserLogin").removeAttr("disabled")
+
+        if ($('#remember_me').is(':checked')) {
+            $("#remember_me").prop("checked", true)
+        } else {
+            $("#remember_me").prop("checked", false)
+        }
     }
 }
 
-function logoutFunction() {
-    ActiveUser.loggedIn = false
-    activeMenuAccountHeader()
-    saveStorageUser()
-}
 
+function logoutFunction() {
+    sessionStorage.removeItem('User')
+    activeMenuAccountHeader()
+}
 
 ///////////////////////////////////////////////////Funciones de Carrito/////////////////////////////////////////////////////////
 function removeElementCart(idArrayPositionDelete, idDivElement) {
@@ -528,9 +543,10 @@ function loadShoppingcart() {
             }))
     )
 }
-////////////////////////////////////////////////////Funciones de carga /////////////////////////////////////////////////////////
 
-function LoadPage() {
+////////////////////////////////////////////////////Funciones de carga de Todas los HTMLs /////////////////////////////////////////////////////////
+
+function LoadPages() {
     // Funciones de Carrito
     if ((localStorage.getItem('ShoppingCart') != "") || (localStorage.getItem('ShoppingCart') != null)) {
         //Genero Estructura de Carrito en Header
@@ -538,4 +554,195 @@ function LoadPage() {
     }
     //Funciones de Sesion de Usuario
     activeMenuAccountHeader()
+    $("#BtnLogout").click(logoutFunction);
+
 }
+////////////////////////////////////////////////////Funciones de carga de Paguina Cuenta de Usuario/////////////////////////////////////////////////////////
+
+function InitPageAccountAdress() {
+
+    //chargeProvincesCombo()
+    //searchZipCode()
+}
+
+function loadLocality() {
+
+    let locality = $("#account-province").val();
+    let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCiudades?provincia=" + locality
+    let repeatedValues = [];
+    $.ajax({
+        method: "GET",
+        url: url,
+        cache: false,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+            $("#account-city").empty()
+            if (data.Localidades.length != 0) {
+                repeatedValues.push(data.Localidades[0].Localidad)
+                for (let i = 0; i < data.Localidades.length; i++) {
+                    if (i != 0) {
+                        for (let y = 0; y < repeatedValues.length; y++) {
+                            if (repeatedValues[y] != data.Localidades[i].Localidad) {
+                                $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
+                            }
+                        }
+                    } else {
+                        $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
+                    }
+                }
+            } else {
+                $("#account-city").append($("<option>", {
+                    value: 0,
+                    text: 'Servicio Sin Datos'
+                }));
+            }
+        },
+        error: function (request, error) {
+            /*A futuro Logear rrores de Servicio en backend*/
+            console.log(arguments);
+        }
+    });
+}
+
+
+function searchZipCode() {
+
+    let province = $("#account-province").val();
+    let provinceSelected = $('#account-province option:selected').html()
+    let locality = $('#account-city option:selected').html()
+    locality = locality.replace(/\s+/g, "%20")
+    let street = $("#account-address").val()
+    street = street.replace(/\s+/g, "%20")
+    let number = $("#account-numberStreet").val()
+    let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCP?provincia=" + province + "&localidad=" + locality + "&calle=" + street + "&altura=" + number;
+    $.ajax({
+        method: "GET",
+        url: url,
+        cache: false,
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (data) {
+
+            if (data.Localidades.length == 0) {
+                //alertar que la direccion NO existe
+                alert("Direccion Inexistente !!")
+            } else {
+                $("#account-zip").val(data.Localidades[0].NewZip)
+                saveUserDirection(data.Localidades[0].Nombre1, number, provinceSelected, data.Localidades[0].Localidad, data.Localidades[0].NewZip, ActiveUser.direction.latitude, ActiveUser.direction.longitude, data.Localidades[0].Tipo, data.Localidades[0].Partido)
+                getCoords(ActiveUser.direction.street + " " + ActiveUser.direction.number, ActiveUser.direction.city, ActiveUser.direction.province)
+                $("#mapa").show()
+            }
+        },
+        error: function (request, error) {
+            //console.log(arguments);
+            alert(" Se produjo un error: " + error);
+        }
+    });
+
+}
+
+function Updatemap(latitude, longitude) {
+
+    let vMarker
+    let map
+    //No me permite Cambiar a JQUERY ya que da un error de comon.js
+    map = new google.maps.Map(document.getElementById('mapa'), {
+        zoom: 15,
+        center: new google.maps.LatLng("-34.668393", "-58.528612"),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    //aca van los valores  para que se visualicen de forma correcta 
+    vMarker = new google.maps.Marker({
+        position: new google.maps.LatLng(latitude, longitude),
+        draggable: true
+    });
+    google.maps.event.addListener(vMarker, 'dragend', function (evt) {
+        map.panTo(evt.latLng);
+        //Seteo en un Array las nuevas Coordenadas
+        let arrayLng = String(evt.latLng).split(",", 2);
+        //Guardo las Nuevas COordenadas seleccionadas por el Pin
+        saveLngLatUserDirection(arrayLng[0].replace("(", ""), arrayLng[1].replace(")", ""))
+    });
+    map.setCenter(vMarker.position);
+    vMarker.setMap(map);
+}
+
+function saveLngLatUserDirection(latitude, longitude) {
+
+    //console.log("Valor Latitud antes de Actualizar: " + ActiveUser.direction.latitude)
+    //console.log("Valor Longitud antes de Actualizar: " + ActiveUser.direction.longitude)
+
+    ActiveUser.direction.latitude = latitude;
+    ActiveUser.direction.longitude = longitude;
+
+    console.log("Valor Latitud DESPUES de Actualizar: " + ActiveUser.direction.latitude)
+    console.log("Valor longitud DESPUES de Actualizar: " + ActiveUser.direction.longitude)
+}
+
+function saveUserDirection(street, number, province, city, zipCode, latitude, longitude, typeDirection, state) {
+
+    ActiveUser.direction.street = street;
+    ActiveUser.direction.number = number;
+    ActiveUser.direction.province = province;
+    ActiveUser.direction.city = city;
+    ActiveUser.direction.zipCode = zipCode;
+    ActiveUser.direction.latitude = latitude;
+    ActiveUser.direction.longitude = longitude;
+    ActiveUser.direction.typeDirection = typeDirection;
+    ActiveUser.direction.state = state;
+}
+
+function getCoords(street, city, province) {
+
+    let vMarker
+    let map
+    let geocoder = new google.maps.Geocoder();
+    let address = street + city + province
+    if (address != '') {
+        // Llamamos a la función geodecode pasandole la dirección que hemos introducido en la caja de texto.
+        geocoder.geocode({
+            'address': address
+        }, function (results, status) {
+            if (status == 'OK') {
+                saveLngLatUserDirection(results[0].geometry.location.lat(), results[0].geometry.location.lng())
+                Updatemap(ActiveUser.direction.latitude, ActiveUser.direction.longitude)
+            } else {
+                //Guardar el error detectado con los datos
+                console.log("Geolocalizacion No encontrada")
+            }
+        });
+    }
+}
+
+function saveDirectionUser() {
+    //validar que este logeado antes de guardar informacion
+}
+/*
+function initMap(latitude, longitude) {
+
+    alert("initMap")
+    // Hacer set up del mapa
+    var centro = {
+        lat: latitude,
+        lng: longitude
+    };
+    map = new google.maps.Map(document.getElementById('mapa'), {
+        center: centro,
+        zoom: 15,
+        streetViewControl: true
+    });
+
+    // listener que capta el click en el mapa
+    google.maps.event.addListener(map, 'click', function (event) {
+        let latmh = event.latLng.lat();
+        let lngmh = event.latLng.lng();
+        // ponemos un marcador donde se hace click
+        var marker = new google.maps.Marker({
+            position: event.latLng,
+            map: map
+        });
+
+        console.log(latmh + " vvv " + lngmh);
+    });
+}*/

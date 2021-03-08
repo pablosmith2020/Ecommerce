@@ -41,6 +41,8 @@
   </script>
   <!-- Modernizr-->
   <script src="js/modernizr.min.js"></script>
+  <!--Recaptcha-->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <!-- Body-->
 
@@ -376,7 +378,7 @@
     <!-- Search-->
     <form class="site-search" method="get">
       <input type="text" name="site_search" placeholder="Ingrese Producto a Buscar...">
-      <div class="search-tools"><span class="clear-search">Clear</span><span class="close-search"><i
+      <div class="search-tools"><span class="clear-search">Limpiar</span><span class="close-search"><i
             class="icon-cross"></i></span></div>
     </form>
     <div class="site-branding">
@@ -476,6 +478,7 @@
         <div class="tools">
           <div class="search"><i class="icon-search"></i></div>
           <div id="ImgAccount" class="account">
+            <a href="#"></a>
             <!-- <img  class="rounded-circle" src="img/account/user-ava-sm.jpg"><a href="account-orders.html"></a>
               <i class="icon-head">-->
             <ul id="MenuAccount" class="toolbar-dropdown">
@@ -624,7 +627,10 @@
                 <input class="form-control" type="password" id="reg-pass-confirm" required>
               </div>
             </div>
+            
             <div class="col-12 text-center text-sm-right">
+              <!--ReCaptcha
+            <div class="g-recaptcha" data-sitekey="6LdayG4aAAAAADqiAOcDJrMTzyUmwWsTahWAR-qe"></div>-->
               <button id="checkIn" class="btn btn-primary margin-bottom-none" type="button" id="checkIn"
                 disabled>Registrarse</button>
             </div>

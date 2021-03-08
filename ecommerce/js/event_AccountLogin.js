@@ -8,7 +8,7 @@ $("#btnUserLogin").click(validateLogin);
 /* Genero el Evento Input Pass para resetearlo en caso de error */
 $("#userPassLogin").click(resetControlPass);
 /*Genero el Evento de seteo de recordar Usuarioy guardo el valor en una variable*/
-$("#remember_me").change(validateRemeberUser);
+//$("#remember_me").change(validateRemeberUser);
 
 $("#userPassLogin").keyup(function (e) {
     if (e.which == 13) {
@@ -21,4 +21,4 @@ $("#userPassLogin").keyup(function (e) {
 /* Genero el Evento de validacion de email si el mismo esta cargado */
 $("#reg-email").blur(validateEmail);
 $("#checkIn").click(validateResgistrationForm)
-$("#BtnLogout").click(logoutFunction)
+//$("#BtnLogout").click(logoutFunction)

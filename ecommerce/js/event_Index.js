@@ -1,0 +1,1 @@
+$("#BtnLogout").click(logoutFunction);
