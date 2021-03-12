@@ -9,7 +9,60 @@ let arrayErrorPasswordFormat = []
 //window.addEventListener('load', LoadPage)
 $(document).ready(LoadPages)
 
+
 //////////////////////////////////////////////////////Funciones Globales/////////////////////////////////////////////////////////
+function encodeBase64(textoPlano) {
+    let base64s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    textoPlano = escape(textoPlano);
+    let bits, dual, i = 0,
+        encOut = '';
+    while (textoPlano.length >= i + 3) {
+        bits =
+            (textoPlano.charCodeAt(i++) & 0xff) << 16 |
+            (textoPlano.charCodeAt(i++) & 0xff) << 8 |
+            textoPlano.charCodeAt(i++) & 0xff;
+        encOut +=
+            base64s.charAt((bits & 0x00fc0000) >> 18) +
+            base64s.charAt((bits & 0x0003f000) >> 12) +
+            base64s.charAt((bits & 0x00000fc0) >> 6) +
+            base64s.charAt((bits & 0x0000003f));
+    }
+    if (textoPlano.length - i > 0 && textoPlano.length - i < 3) {
+        dual = Boolean(textoPlano.length - i - 1);
+        bits =
+            ((textoPlano.charCodeAt(i++) & 0xff) << 16) |
+            (dual ? (textoPlano.charCodeAt(i) & 0xff) << 8 : 0);
+        encOut +=
+            base64s.charAt((bits & 0x00fc0000) >> 18) +
+            base64s.charAt((bits & 0x0003f000) >> 12) +
+            (dual ? base64s.charAt((bits & 0x00000fc0) >> 6) : '=') +
+            '=';
+    }
+    return encOut
+}
+
+function decodeBase64(textoBase64) {
+    let base64s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let bits, decOut = '',
+        i = 0;
+    let undecOut = null;
+    for (; i < textoBase64.length; i += 4) {
+        bits =
+            (base64s.indexOf(textoBase64.charAt(i)) & 0xff) << 18 |
+            (base64s.indexOf(textoBase64.charAt(i + 1)) & 0xff) << 12 |
+            (base64s.indexOf(textoBase64.charAt(i + 2)) & 0xff) << 6 |
+            base64s.indexOf(textoBase64.charAt(i + 3)) & 0xff;
+        decOut += String.fromCharCode((bits & 0xff0000) >> 16, (bits & 0xff00) >> 8, bits & 0xff);
+    }
+    if (textoBase64.charCodeAt(i - 2) === 61) {
+        undecOut = decOut.substring(0, decOut.length - 2);
+    } else if (textoBase64.charCodeAt(i - 1) === 61) {
+        undecOut = decOut.substring(0, decOut.length - 1);
+    } else {
+        undecOut = decOut;
+    }
+    return unescape(undecOut);
+}
 
 function validateEmail(e) {
     if (this.value != "") {
@@ -55,6 +108,17 @@ function validateEmail(e) {
         }
     }
 }
+
+function parseLocation() {
+    let path = location.hash.slice(1).toLowerCase()
+    return path
+}
+
+function findComponentByPath(path, router) {
+    //Exp. Regulares: https://www.w3schools.com/jsref/jsref_obj_regexp.asp
+    let objRouter = router.find(r => r.path.match(new RegExp(`^\\${path}$`, 'gm'))) || undefined;
+    return objRouter
+}
 /////////////////////////////////////////////////////Funciones de Gestion de Usuario/////////////////////////////////////////////////////////
 function validateLogin() {
     if ($("#userPassLogin").val() == "") {
@@ -74,12 +138,14 @@ function validateLogin() {
                 saveStorageUser()
                 saveStoramail()
                 activeMenuAccountHeader()
+                loadMenuAccount()
                 //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html" -------------luego dejar est re direccion
             } else {
                 saveStorageUser()
                 deleteStoramail()
                 ActiveUser.loggedIn = true
                 activeMenuAccountHeader()
+                loadMenuAccount()
                 //window.location = "file:///C:/Users/Pablo/OneDrive/coderhouse/Site/SIte/ecommerce/index.html"
             }
             resetControlEmail()
@@ -319,29 +385,30 @@ function CloseModal() {
 }
 
 function activeMenuAccountHeader() {
+    $("#IconAccountHeader").remove
     if (sessionStorage.getItem('User')) {
         ActiveUser = JSON.parse(sessionStorage.getItem('User'))
         //Elimino Icono en Header
         $("#IconAccountHeader").remove()
         //Cargo la Foto la foto
-
         if ($("#ImgPhoto").length > 0) {} else {
             $("#ImgAccount").append('<img class="rounded-circle" src=' + ActiveUser.photo + ' id="ImgPhoto"></img>')
         }
         $("#MenuAccount").attr("style", "block");
     } else {
+        $("#IconAccountHeader").remove
         $("#MenuAccount").hide();
         if ($("ImgPhoto")) {
             $("#ImgAccount img:last-child").remove()
             $(".user-ava").remove()
             $("#ImgAccount").append('<a href="account-login.html"></a>')
             $("#ImgAccount").append('<i href="/account-login.html" class="icon-head" id="IconAccountHeader"></i>')
+            $("#ulHeaderMenucenter").remove()
         }
     }
     if ((sessionStorage.getItem('Usermail') != "" || sessionStorage.getItem('Usermail') != null) && (sessionStorage.getItem('User') != "")) {
         $("#useremailLogin").attr('value', sessionStorage.getItem('Usermail'))
         $("#btnUserLogin").removeAttr("disabled")
-
         if ($('#remember_me').is(':checked')) {
             $("#remember_me").prop("checked", true)
         } else {
@@ -349,6 +416,139 @@ function activeMenuAccountHeader() {
         }
     }
 }
+
+function loadMenuAccount() {
+    if (isLogged()) {
+        $("#btnMyAccount").attr("href", "account-orders.html")
+        //Login- Registrarce
+        $("#liAccountMenuCenter").append(
+            $('<ul/>', {
+                id: 'ulHeaderMenucenter',
+                class: 'sub-menu'
+            }).append(
+                $('<li>', {
+                    id: 'liLogin'
+                })))
+        $("#liLogin").append(
+            $('<a/>', {
+                href: 'account-login.html',
+                text: 'Login / Register'
+            }))
+        //Recordar Contraseña
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liRecoveryPassword'
+            }))
+        $("#liRecoveryPassword").append(
+            $('<a/>', {
+                href: 'account-password-recovery.html',
+                text: 'Recordar Contraseña'
+            }))
+        //Mis Pedidos
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liMyOrder',
+                onclick: 'accountPageRedirect("MyOrders")'
+            }))
+        $("#liMyOrder").append(
+            $('<a/>', {
+                href: 'account-address.html#/MyOrders',
+                text: 'Mis Pedidos'
+            }))
+        //Favoritos
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liWishlist',
+                onclick: 'accountPageRedirect("MyWishlist")'
+            }))
+        $("#liWishlist").append(
+            $('<a/>', {
+                href: 'account-address.html#/MyWishlist',
+                text: 'Favoritos'
+            }))
+        //Perfil
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liProfile'
+            }))
+        $("#liProfile").append(
+            $('<a/>', {
+                href: 'account-address.html#/MyProfile',
+                text: 'Perfil',
+                onclick: 'accountPageRedirect("MyProfile")'
+            }))
+        //Contacto / Direccion
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liAddress',
+                onclick: 'accountPageRedirect("MyDirection")'
+            }))
+        $("#liAddress").append(
+            $('<a/>', {
+                href: 'account-address.html#/MyDirection',
+                text: 'Mis Direcciones'
+            }))
+        //Comunicacion
+        $("#ulHeaderMenucenter").append(
+            $('<li>', {
+                id: 'liComunication'
+            }))
+        $("#liComunication").append(
+            $('<a/>', {
+                href: 'account-address.html#/Comunication',
+                text: 'Comunicacion',
+                onclick: 'accountPageRedirect("Comunication")'
+            }))
+    } else {
+        $("#btnMyAccount").attr("href", "account-login.html")
+        //Ver porque no queda el  href correcto cuando hago logout
+    }
+
+}
+
+function accountPageRedirect(url) {
+    let newUrl = "account-address.html#/" + url
+    $(location).attr('href', newUrl);
+    routers()
+}
+
+//en prueba porque no funciona al 100% no colorea el componente
+function activeSelectorAccount(element) {
+
+    console.log(element)
+
+    element.addClass("active");
+    element.focus()
+
+}
+
+function clearSelectorMenuAccount() {
+    $('#myorders').removeClass('active');
+    $('#mydirection').removeClass('active');
+    $('#myprofile').removeClass('active');
+    $('#mywishlist').removeClass('active');
+    $('#comunication').removeClass('active');
+}
+
+function reloadComunication(id) {
+    //TODO agregarle el parametro ID para luego ir al Back a buscar la comunicacion sleccionada
+
+    console.log("funcion reloadcomunication")
+    if (id > 0) {
+        $(location).attr('href', "account-address.html#/ComunicationActivate");
+        routers()
+    } else {
+        $(location).attr('href', "account-address.html#/Comunication");
+        routers()
+        $('html, body').animate({
+            scrollTop: 0
+        }, 'fast');
+    }
+
+}
+
+
+
 
 
 function logoutFunction() {
@@ -552,9 +752,14 @@ function LoadPages() {
         //Genero Estructura de Carrito en Header
         loadShoppingcart()
     }
-    //Funciones de Sesion de Usuario
+    //Funciones e Menu Header Central
+    loadMenuAccount()
+
+    //Funciones de Sesion de Usuario Header Derecho
     activeMenuAccountHeader()
-    $("#BtnLogout").click(logoutFunction);
+
+
+
 
 }
 ////////////////////////////////////////////////////Funciones de carga de Paguina Cuenta de Usuario/////////////////////////////////////////////////////////
@@ -563,6 +768,7 @@ function InitPageAccountAdress() {
 
     //chargeProvincesCombo()
     //searchZipCode()
+
 }
 
 function loadLocality() {
@@ -718,31 +924,12 @@ function getCoords(street, city, province) {
 function saveDirectionUser() {
     //validar que este logeado antes de guardar informacion
 }
-/*
-function initMap(latitude, longitude) {
 
-    alert("initMap")
-    // Hacer set up del mapa
-    var centro = {
-        lat: latitude,
-        lng: longitude
-    };
-    map = new google.maps.Map(document.getElementById('mapa'), {
-        center: centro,
-        zoom: 15,
-        streetViewControl: true
-    });
-
-    // listener que capta el click en el mapa
-    google.maps.event.addListener(map, 'click', function (event) {
-        let latmh = event.latLng.lat();
-        let lngmh = event.latLng.lng();
-        // ponemos un marcador donde se hace click
-        var marker = new google.maps.Marker({
-            position: event.latLng,
-            map: map
-        });
-
-        console.log(latmh + " vvv " + lngmh);
-    });
-}*/
+function isLogged() {
+    //Retorna si existe Usuario en Sesion
+    if (sessionStorage.length > 0) {
+        return true
+    } else {
+        return false
+    }
+}

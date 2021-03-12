@@ -21,4 +21,4 @@ $("#userPassLogin").keyup(function (e) {
 /* Genero el Evento de validacion de email si el mismo esta cargado */
 $("#reg-email").blur(validateEmail);
 $("#checkIn").click(validateResgistrationForm)
-//$("#BtnLogout").click(logoutFunction)
+$("#BtnLogout").click(logoutFunction);

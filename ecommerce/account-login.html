@@ -28,17 +28,6 @@
   <!-- Customizer Styles-->
   <link rel="stylesheet" media="screen" href="customizer/customizer.min.css">
   <!-- Google Tag Manager-->
-  <script>
-    (function (w, d, s, l, i) {
-      w[l] = w[l] || []; w[l].push({
-        'gtm.start':
-          new Date().getTime(), event: 'gtm.js'
-      }); var f = d.getElementsByTagName(s)[0],
-        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-          '../../../../www.googletagmanager.com/gtm5445.html?id=' + i + dl; f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-T4DJFPZ');
-
-  </script>
   <!-- Modernizr-->
   <script src="js/modernizr.min.js"></script>
   <!--Recaptcha-->
@@ -393,23 +382,22 @@
     <!-- Main Navigation-->
     <nav class="site-menu">
       <ul>
-
         <li><a href="shop-grid-ls.html"><span>Shop</span></a>
           <ul class="sub-menu">
-            <li><a href="shop-categories.html">Categorias</a></li>
+              <li><a href="shop-categories.html">Categorias</a></li>
             <li class="has-children"><a href="shop-grid-ls.html"><span>Ver en Grilla</span></a>
             </li>
             <li class="has-children"><a href="shop-list-ls.html"><span>Ver en Lista</span></a>
             </li>
-            <!-- <li><a href="shop-single.html">Single Product</a></li>-->
-            <li><a href="cart.html">Ver Carrito</a></li>
+             <!-- <li><a href="shop-single.html">Single Product</a></li>-->
+              <li><a href="cart.html">Ver Carrito</a></li>
             <li class="has-children"><a href="checkout-address.html"><span>Checkout</span></a>
-              <ul class="sub-menu">
-                <li><a href="checkout-address.html">Direccion</a></li>
-                <li><a href="checkout-shipping.html">Envio</a></li>
-                <li><a href="checkout-payment.html">Pago</a></li>
-                <li><a href="checkout-review.html">Vista previa</a></li>
-                <li><a href="checkout-complete.html">Completar</a></li>
+              <ul class="sub-menu">             
+                  <li><a href="checkout-address.html">Direccion</a></li>
+                  <li><a href="checkout-shipping.html">Envio</a></li>
+                  <li><a href="checkout-payment.html">Pago</a></li>
+                  <li><a href="checkout-review.html">Vista previa</a></li>
+                  <li><a href="checkout-complete.html">Completar</a></li>
               </ul>
             </li>
           </ul>
@@ -437,38 +425,28 @@
               </ul>
             </li>
             <li>
-              <section class="promo-box" style="background-image: url(img/banners/02.jpg);"><span class="overlay-dark"
-                  style="opacity: .4;"></span>
+              <section class="promo-box" style="background-image: url(img/banners/02.jpg);"><span class="overlay-dark" style="opacity: .4;"></span>
                 <div class="promo-box-content text-center padding-top-2x padding-bottom-2x">
                   <h4 class="text-light text-thin text-shadow">Nueva Coleccion</h4>
-                  <h3 class="text-bold text-light text-shadow">Lentes de Sol</h3><a class="btn btn-sm btn-primary"
-                    href="#">Shop Now</a>
+                  <h3 class="text-bold text-light text-shadow">Lentes de Sol</h3><a class="btn btn-sm btn-primary" href="#">Shop Now</a>
                 </div>
               </section>
             </li>
             <li>
               <section class="promo-box" style="background-image: url(img/banners/03.jpg);">
-                <!-- Choose between .overlay-dark (#000) or .overlay-light (#fff) with default opacity of 50%. You can overrride default color and opacity values via 'style' attribute.--><span
-                  class="overlay-dark" style="opacity: .45;"></span>
+                <!-- Choose between .overlay-dark (#000) or .overlay-light (#fff) with default opacity of 50%. You can overrride default color and opacity values via 'style' attribute.--><span class="overlay-dark" style="opacity: .45;"></span>
                 <div class="promo-box-content text-center padding-top-2x padding-bottom-2x">
                   <h3 class="text-bold text-light text-shadow">Ofertas Limitadas</h3>
-                  <h4 class="text-light text-thin text-shadow">Ahorra hasta el 50%!</h4><a
-                    class="btn btn-sm btn-primary" href="#">Learn More</a>
+                  <h4 class="text-light text-thin text-shadow">Ahorra hasta el 50%!</h4><a class="btn btn-sm btn-primary" href="#">Learn More</a>
                 </div>
               </section>
             </li>
           </ul>
         </li>
-        <li><a href="account-orders.html"><span>Mi Cuenta</span></a>
-          <ul class="sub-menu">
-            <li><a href="account-login.html">Login / Registrarce</a></li>
-            <li><a href="account-password-recovery.html">Recordar Contraseña</a></li>
-            <li><a href="account-orders.html">Mi Lista de Pedidos</a></li>
-            <li><a href="account-wishlist.html">Favoritos</a></li>
-            <li><a href="account-profile.html">Perfil</a></li>
-            <li><a href="account-address.html">Contacto / Direccion de Envio</a></li>
-            <li><a href="account-tickets.html">Comunicacion</a></li>
-          </ul>
+        <li id="liAccountMenuCenter">
+          <a id="btnMyAccount" href="account-address.html#/MyProfile">
+              <span>Mi Cuenta</span>
+          </a>
         </li>
       </ul>
     </nav>
@@ -479,7 +457,7 @@
           <div class="search"><i class="icon-search"></i></div>
           <div id="ImgAccount" class="account">
             <a href="#"></a>
-            <!-- <img  class="rounded-circle" src="img/account/user-ava-sm.jpg"><a href="account-orders.html"></a>
+             <!--<img  class="rounded-circle" src="img/account/user-ava-sm.jpg"><a href="account-orders.html"></a>
               <i class="icon-head">-->
             <ul id="MenuAccount" class="toolbar-dropdown">
               <li class="sub-menu-user">
@@ -489,20 +467,18 @@
                   <h6 class="user-name">Pablo Smith</h6><span class="text-xs text-muted">290 Puntos Acumulados</span>
                 </div>
               </li>
-              <li><a href="account-profile.html">Mi Cuenta</a></li>
-              <li><a href="account-orders.html">Lista de Pedidos</a></li>
-              <li><a href="account-wishlist.html">Favoritos</a></li>
+              <li><a href="account-address.html#/MyProfile">Mi Cuenta</a></li>
+              <li><a href="account-address.html#/MyOrders">Lista de Pedidos</a></li>
+              <li><a href="account-address.html#/MyWishlist">Favoritos</a></li>
               <li class="sub-menu-separator"></li>
               <li><a id="BtnLogout" href="#"> <i class="icon-unlock"></i>Logout</a></li>
             </ul>
           </div>
-
-          <div class="cart"><a id="BtnHeaderCart" href="cart.html"></a><i class="icon-bag"></i><span
-              id="CountProductCart" class="count"></span><span id="TotalPurchaseCart" class="subtotal"></span>
-            <div class="toolbar-dropdown" id="ShoppingToolbar-dropdown">
+          <div class="cart"><a id="BtnHeaderCart" href="cart.html"></a><i class="icon-bag"></i><span id="CountProductCart" class="count"></span><span id="TotalPurchaseCart" class="subtotal"></span>
+            <div class="toolbar-dropdown" id="ShoppingToolbar-dropdown" >
             </div>
           </div>
-
+          
         </div>
       </div>
     </div>
