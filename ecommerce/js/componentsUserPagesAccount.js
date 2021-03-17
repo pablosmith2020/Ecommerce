@@ -1,6 +1,11 @@
+if (sessionStorage.getItem('User')) {
+  let ActiveUser = JSON.parse(sessionStorage.getItem('User'))
+
+}
+
 const accountAddress = {
-    render: function () {
-        return `
+  render: function () {
+    return `
         <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <h4>Dirección de Contacto</h4>
         <hr class="padding-bottom-1x">
@@ -37,7 +42,7 @@ const accountAddress = {
                     </select>
                 </div>
             </div>
-            <div class="col-md-6">
+             <div class="col-md-6">
                 <div class="form-group">
                     <label for="account-city">Ciudad</label>
                     <select class="form-control" id="account-city">
@@ -55,13 +60,15 @@ const accountAddress = {
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="account-address2">Altura</label>
-                    <input onblur="searchZipCode()" class="form-control" type="number" id="account-numberStreet" placeholder="Ingrese la altura">
+                    <input  class="form-control" type="number" id="account-numberStreet" placeholder="Ingrese la altura">
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" id="viewErrorDirection">
                 <div class="form-group">
                     <label for="account-zip">Codigo Postal</label>
                     <input class="form-control" type="text" id="account-zip" required="" disabled="">
+                </div>
+                <div >
                 </div>
             </div>
             <div class="col-md-6">
@@ -70,6 +77,22 @@ const accountAddress = {
                     <input class="form-control" type="text" id="account-SmartPhone">
                 </div>
             </div>
+
+                <div class="text-right">
+                  <button id="account-UpdateDirections" class="btn btn-primary margin-bottom-none" type="button" 
+                  data-toast="" data-toast-position="topRight" data-toast-type="success" 
+                  data-toast-icon="icon-circle-check" data-toast-title="Success!" 
+                  data-toast-message="Su dirección se actualizó con éxito." disabled>Verificar Dirección</button> 
+                </div>
+
+            <div class="text-right">
+                    <button   id="account-Submit" class="btn btn-primary margin-bottom-none" type="button"
+                        data-toast="" data-toast-position="topRight" data-toast-type="success"
+                        data-toast-icon="icon-circle-check" data-toast-title="Success!"
+                        data-toast-message="Su dirección se actualizó con éxito." disabled>Actualizar dirección</button> 
+              </div>
+              <hr id="viewMessageMap" class="margin-top-2x margin-bottom-2x">
+
             <div id="mapa" style="width: 800px; height: 350px; display: none;"> </div>
             <div class="col-12 padding-top-1x">
                 <h4>Dirección de Envío</h4>
@@ -79,20 +102,15 @@ const accountAddress = {
                     <label class="custom-control-label" for="same_address">Misma Dirección de Contacto</label>
                 </div>
                 <hr class="margin-top-1x margin-bottom-1x">
-                <div class="text-right">
-                    <button   id="account-SmartPhoneSubmit" class="btn btn-primary margin-bottom-none" type="button"
-                        data-toast="" data-toast-position="topRight" data-toast-type="success"
-                        data-toast-icon="icon-circle-check" data-toast-title="Success!"
-                        data-toast-message="Su dirección se actualizó con éxito.">Actualizar dirección</button> 
-                </div>
+                
             </div>
         </form>
-` 
+`
+  }
 }
-    }
 const MyOrders = {
-    render: function () {
-        return `
+  render: function () {
+    return `
           <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <div class="table-responsive">
           <table class="table table-hover margin-bottom-none">
@@ -148,37 +166,36 @@ const MyOrders = {
         <div class="text-right"><a class="btn btn-link-primary margin-bottom-none" href="#MyOrders"><i class="icon-download"></i>&nbsp;Detalle de pedidos</a></div>
         
     `
-    }
+  }
 }
 
-
 const MyProfile = {
-    render: function () {
-        return `
+  render: function () {
+    return `
         <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <form class="row">
           <div class="col-md-6">
             <div class="form-group">
               <label for="account-fn">Nombre</label>
-              <input class="form-control" type="text" id="account-fn" value="Pablo" required="">
+              <input class="form-control" type="text" id="account-fn" value=" ` + ActiveUser.firstname + `" required="">
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
               <label for="account-ln">Apellido</label>
-              <input class="form-control" type="text" id="account-ln" value="Smith" required="">
+              <input class="form-control" type="text" id="account-ln" value="` + ActiveUser.lastname + `" required="">
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
               <label for="account-email">Correo - Usurario</label>
-              <input class="form-control" type="email" id="account-email" value="pablomsmith@hotmail.com" disabled="">
+              <input class="form-control" type="email" id="account-email" value="` + ActiveUser.email + `" disabled="">
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
               <label for="account-phone">Telefono Particular</label>
-              <input class="form-control" type="text" id="account-phone" value="+54(011) 1111-9672" required="">
+              <input class="form-control" type="text" id="account-phone" value="` + ActiveUser.celnumber + `" required="">
             </div>
           </div>
           <div class="col-md-6">
@@ -205,12 +222,12 @@ const MyProfile = {
           </div>
         </form>
     `
-    }
+  }
 }
 
 const MyWishlist = {
-    render: function () {
-        return `
+  render: function () {
+    return `
         <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <!-- Wishlist Table-->
         <div class="table-responsive wishlist-table margin-bottom-none">
@@ -273,13 +290,13 @@ const MyWishlist = {
           <label class="custom-control-label" for="inform_me">Informarme cuando el artículo de mi lista de Favoritos esté disponible</label>
         </div>
     `
-    }
+  }
 }
 
 //TODO - Hacer que cada comunicacion tenga un DI univoco que sea el id de la comunicacion
 const Comunication = {
-    render: function () {
-        return `
+  render: function () {
+    return `
         <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <div class="table-responsive">
           <table class="table table-hover margin-bottom-none">
@@ -329,13 +346,13 @@ const Comunication = {
           <button class="btn btn-primary margin-bottom-none" data-toggle="modal" data-target="#openTicket">Enviar Nueva Comunicacion</button>
         </div>
     `
-    }
+  }
 }
 
 
 const ComunicationActivate = {
-    render: function () {
-        return `
+  render: function () {
+    return `
         <div class="padding-top-2x mt-2 hidden-lg-up"></div>
         <div class="table-responsive margin-bottom-2x">
           <table class="table margin-bottom-none">
@@ -393,17 +410,17 @@ const ComunicationActivate = {
           </div>
         </form>
     `
-    }
+  }
 }
 
 
 
 const ErrorComponent = {
-    render: function () {
-        return `
+  render: function () {
+    return `
     <Selection>
         <h1>Error !!</h1>
     </Selection>
     `
-    }
+  }
 }

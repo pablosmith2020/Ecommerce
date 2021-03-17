@@ -31,6 +31,10 @@ const router = [{
 
 ];
 
+if (sessionStorage.getItem('User')) {
+    let ActiveUser = JSON.parse(sessionStorage.getItem('User'))
+}
+
 
 function routers() {
     // Obtiene la URL
@@ -41,8 +45,7 @@ function routers() {
         component = ErrorComponent
     } = findComponentByPath(path, router) || {};
 
-    // Si no existe, muestra error.
-    // Si existe, muestra el contenido de ese componente.
+    // Si existe, muestra el contenido de ese componente.Si no existe, muestra error.
     $('#root').html(component.render());
 
     //TODO sobre escribir la call de cada elemento del menu lateral con el atriburo "with-badge" y "badge-pill" para agreagr el globo de cantidad
@@ -50,21 +53,35 @@ function routers() {
     switch (path.substring(1, path.length)) {
         case 'myorders':
             clearSelectorMenuAccount()
-            $("#myorders").addClass("active");            
+            $("#myorders").addClass("active");
             break;
         case 'mydirection':
             $("#account-province").bind("change", loadLocality);
-            $("#account-SmartPhoneSubmit").bind("click", saveDirectionUser);
-            $("#account-numberStree").bind("blur", searchZipCode);
-            $("#account-SmartPhoneSubmit").bind("click", saveDirectionUser);
-            clearSelectorMenuAccount()
+            $("#account-UpdateDirections").bind("click", searchDirectionBtn);
+            $("#account-Submit").bind("click", saveDirectionUser);
+            $("#account-province").bind("change", enableDisableVerificationDirection);
+            $("#account-city").bind("change", enableDisableVerificationDirection);
+            $("#account-address").bind("keyup", enableDisableVerificationDirection);
+            $("#account-numberStreet").bind("keyup", enableDisableVerificationDirection);
+            
             $("#mydirection").addClass("active");
+           
+clearSelectorMenuAccount()
+            // Precargo los valores si esta Logeado
+            if (sessionStorage.getItem('User')) {
+                let ActiveUser = JSON.parse(sessionStorage.getItem('User'))
+                $("#account-province").val(ActiveUser.direction.idprovince);
+                reloadLocality()
+                $("#account-address").val(ActiveUser.direction.street);
+                $("#account-numberStreet").val(ActiveUser.direction.number);
+                $("#account-SmartPhone").val(ActiveUser.celnumber);
+            }
             break;
         case 'myprofile':
             clearSelectorMenuAccount()
             $("#myprofile").addClass("active");
             //$("#myprofile").bind("click", activeSelectorAccount($("#myprofile")));
-            
+            console.log("entre a myprofile")
             break;
         case 'mywishlist':
             clearSelectorMenuAccount()
@@ -75,7 +92,7 @@ function routers() {
             $("#comunication").addClass("active");
             break;
         case 'comunicationactivate':
-        break;
+            break;
 
         default:
 

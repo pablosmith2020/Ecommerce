@@ -119,6 +119,19 @@ function findComponentByPath(path, router) {
     let objRouter = router.find(r => r.path.match(new RegExp(`^\\${path}$`, 'gm'))) || undefined;
     return objRouter
 }
+
+function getUrlActualPage() {
+    //Se obtiene el valor de la URL desde el navegador
+    let actual = window.location + '';
+    //Se realiza la división de la URL
+    let split = actual.split("/");
+    //Se obtiene el ultimo valor de la URL
+    let id = split[split.length - 1];
+    return id;
+}
+
+
+
 /////////////////////////////////////////////////////Funciones de Gestion de Usuario/////////////////////////////////////////////////////////
 function validateLogin() {
     if ($("#userPassLogin").val() == "") {
@@ -245,22 +258,22 @@ function validateResgistrationForm() {
         }
     }
     ////////////////////////////////////////////////////////
-
-    let response = grecaptcha.getResponse();
-    $.ajax({
-        type: "POST",
-        url: 'https://www.google.com/recaptcha/api/siteverify',
-        data: {
-            "secret": "(6LdayG4aAAAAAHPZGIr8UVPexeq2BCLSdveS7Q4q)",
-            "response": response,
-            "remoteip": "www.tcfautos.com.ar"
-        },
-        contentType: 'application/x-www-form-urlencoded',
-        success: function (data) {
-            console.log(data);
-        }
-    });
-
+    /*
+        let response = grecaptcha.getResponse();
+        $.ajax({
+            type: "POST",
+            url: 'https://www.google.com/recaptcha/api/siteverify',
+            data: {
+                "secret": "(6LdayG4aAAAAAHPZGIr8UVPexeq2BCLSdveS7Q4q)",
+                "response": response,
+                "remoteip": "www.tcfautos.com.ar"
+            },
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (data) {
+                console.log(data);
+            }
+        });
+    */
     ///////////////////////////////////////////////////////
     if (arrayErrorCheckIn != "") {
         /*Generar el  Contenido para visualziar los errores de todos los campos*/
@@ -384,6 +397,14 @@ function CloseModal() {
     }
 }
 
+function customizeCustomerData() {
+let space = "  "
+    $("#nameUser").text(ActiveUser.firstname +  space + ActiveUser.lastname)
+    $("#rewardPoint").text(ActiveUser.rewardpoints +  space + 'Puntos Acumulados')
+    $("#imageHeartCustomer").attr("src",ActiveUser.photo);
+    $("#imageHeartCustomer").attr("alt",ActiveUser.firstname +  space + ActiveUser.lastname);
+}
+
 function activeMenuAccountHeader() {
     $("#IconAccountHeader").remove
     if (sessionStorage.getItem('User')) {
@@ -395,6 +416,7 @@ function activeMenuAccountHeader() {
             $("#ImgAccount").append('<img class="rounded-circle" src=' + ActiveUser.photo + ' id="ImgPhoto"></img>')
         }
         $("#MenuAccount").attr("style", "block");
+         customizeCustomerData()
     } else {
         $("#IconAccountHeader").remove
         $("#MenuAccount").hide();
@@ -419,7 +441,7 @@ function activeMenuAccountHeader() {
 
 function loadMenuAccount() {
     if (isLogged()) {
-        $("#btnMyAccount").attr("href", "account-orders.html")
+        $("#btnMyAccount").attr("href", "account-address.html#/MyOrders")
         //Login- Registrarce
         $("#liAccountMenuCenter").append(
             $('<ul/>', {
@@ -514,12 +536,8 @@ function accountPageRedirect(url) {
 
 //en prueba porque no funciona al 100% no colorea el componente
 function activeSelectorAccount(element) {
-
-    console.log(element)
-
     element.addClass("active");
     element.focus()
-
 }
 
 function clearSelectorMenuAccount() {
@@ -533,7 +551,6 @@ function clearSelectorMenuAccount() {
 function reloadComunication(id) {
     //TODO agregarle el parametro ID para luego ir al Back a buscar la comunicacion sleccionada
 
-    console.log("funcion reloadcomunication")
     if (id > 0) {
         $(location).attr('href', "account-address.html#/ComunicationActivate");
         routers()
@@ -544,16 +561,12 @@ function reloadComunication(id) {
             scrollTop: 0
         }, 'fast');
     }
-
 }
-
-
-
-
 
 function logoutFunction() {
     sessionStorage.removeItem('User')
     activeMenuAccountHeader()
+    $(location).attr('href', 'index.html');
 }
 
 ///////////////////////////////////////////////////Funciones de Carrito/////////////////////////////////////////////////////////
@@ -582,6 +595,32 @@ function removeElementCart(idArrayPositionDelete, idDivElement) {
         //Seteo los Valores del Header del Carrito
         CalcAmountPurchaseHeaderCart(shoppingCartCurrent)
     }
+    if (getUrlActualPage().trim().toLowerCase().slice(0, 4) == 'cart') {
+        //Borro el elemento del  apagina cart
+        console.log($("#tr-" + idDivElement))
+        $("#tr-" + idDivElement).hide()
+    }
+}
+
+function removeAllElementCart() {
+    let objectCartCurrent = localStorage.getItem('ShoppingCart');
+    let shoppingCartCurrent = JSON.parse(objectCartCurrent);
+    let nodesChild = $("#tbody").find('tr')
+    let idDelete = ""
+    let i = 0
+
+    $.each(nodesChild, function () {
+        shoppingCartCurrent.splice(0, 1)
+        idDelete = nodesChild[i].id.substr(3, nodesChild[i].id.length)
+        $("#divThird-" + idDelete).hide()
+        $("#tr-" + idDelete).hide()
+        i = i + 1
+    })
+
+    localStorage.removeItem("ShoppingCart")
+    CalcAmountPurchaseHeaderCart(shoppingCartCurrent)
+    CalcAmountPurchaseFooterCart(shoppingCartCurrent)
+    $("#ShoppingToolbar-dropdown").hide()
 }
 
 function BtnsHeaderCartMenu(count, amount) {
@@ -591,6 +630,9 @@ function BtnsHeaderCartMenu(count, amount) {
     if (count == 0) {
         $("#BtnHeaderCart").attr("href", "#")
     }
+    //Actualizo el valor de la pagina cart
+    $("#spanTotalAmount").text(amount)
+
 }
 
 function CalcAmountPurchaseFooterCart(shoppingCartCurrent) {
@@ -603,6 +645,8 @@ function CalcAmountPurchaseFooterCart(shoppingCartCurrent) {
         total = parseFloat(total) + parseFloat(sumaParcial)
     }
     $("#spanPrecio").text(total)
+    //Actualizo el total de la pagina cart
+    $("#spanTotalAmount").text(total)
 }
 
 function CalcAmountPurchaseHeaderCart(shoppingCartCurrent) {
@@ -623,7 +667,6 @@ function loadShoppingcart() {
     let objectCartCurrent = localStorage.getItem('ShoppingCart');
     /*Parseo el Objeto obtenido del Storage */
     let shoppingCartCurrent = JSON.parse(objectCartCurrent);
-
     let sumaParcial = ""
     let total = 0
 
@@ -744,6 +787,190 @@ function loadShoppingcart() {
     )
 }
 
+function loadShoppingCartPage() {
+    let objectCartCurrent = localStorage.getItem('ShoppingCart');
+    let shoppingCartCurrent = JSON.parse(objectCartCurrent);
+    let sumaParcial = ""
+    let total = 0
+
+    //Header Table
+    $("#shoppingCart").append(
+        $('<table/>', {
+            id: 'root',
+            class: 'table'
+        }))
+    $("#root").append(
+        $('<thead/>', {
+            id: 'thead1'
+        }))
+    $("#thead1").append(
+        $('<tr/>', {
+            id: 'tr1'
+        }))
+    $("#tr1").append(
+        $('<th/>', {
+            id: 'th1',
+            text: 'Producto'
+        }))
+    $("#tr1").append(
+        $('<th/>', {
+            class: 'text-center',
+            text: 'Cantidad',
+            id: 'th-header1'
+        }))
+    $("#tr1").append(
+        $('<th/>', {
+            class: 'text-center',
+            text: 'Sub Total',
+            id: 'th-header2'
+        }))
+    $("#tr1").append(
+        $('<th/>', {
+            class: 'text-center',
+            text: 'Descuento',
+            id: 'th-header3'
+        }))
+    $("#tr1").append(
+        $('<th/>', {
+            class: 'text-center',
+            id: 'th-header4'
+        }))
+    $("#th-header4").append(
+        $('<a/>', {
+            class: 'btn btn-sm btn-outline-danger',
+            href: '#',
+            text: 'Eliminar Productos',
+            onclick: 'removeAllElementCart()'
+        }))
+    //Body element
+    $("#root").append(
+        $('<tbody/>', {
+            id: 'tbody'
+        }))
+    for (let i = 0; i < shoppingCartCurrent.length; i++) {
+        //primera Columna
+        $("#tbody").append(
+            $('<tr/>', {
+                id: 'tr-' + shoppingCartCurrent[i].id
+            }))
+        $('#' + 'tr-' + shoppingCartCurrent[i].id).append(
+            $('<td/>', {
+                id: 'td-' + shoppingCartCurrent[i].id
+            }))
+        $('#' + 'td-' + shoppingCartCurrent[i].id).append(
+            $('<div/>', {
+                id: 'divProduct-' + shoppingCartCurrent[i].id,
+                class: 'product-item'
+            }))
+        $('#' + 'divProduct-' + shoppingCartCurrent[i].id).append(
+            $('<a/>', {
+                id: 'a-' + shoppingCartCurrent[i].id,
+                class: 'product-thumb',
+                href: 'shop-single.html' //Hacer dinamico el producto
+            }).append(
+                $('<img/>', {
+                    id: 'img-' + shoppingCartCurrent[i].id,
+                    src: shoppingCartCurrent[i].photos,
+                    alt: 'Imagen'
+                })
+            )
+        )
+        $('#' + 'divProduct-' + shoppingCartCurrent[i].id).append(
+            $('<div/>', {
+                id: 'divProduct2-' + shoppingCartCurrent[i].id,
+                class: 'product-info'
+            }))
+        $('#' + 'divProduct2-' + shoppingCartCurrent[i].id).append(
+            $('<h4/>', {
+                id: 'h4-' + shoppingCartCurrent[i].id,
+                class: 'product-title'
+            }))
+        $('#' + 'h4-' + shoppingCartCurrent[i].id).append(
+            $('<a/>', {
+                id: 'a2-' + shoppingCartCurrent[i].id,
+                href: 'shop-single.html',
+                text: shoppingCartCurrent[i].description
+            }))
+        $('#' + 'divProduct2-' + shoppingCartCurrent[i].id).append(
+            $('<span/>', {
+                id: 'span1-' + shoppingCartCurrent[i].id
+            }))
+        $('#' + 'span1-' + shoppingCartCurrent[i].id).append(
+            $('<em/>', {
+                id: 'em1-' + shoppingCartCurrent[i].id,
+                text: 'Tamaño: ' + shoppingCartCurrent[i].size
+            }))
+        $('#' + 'divProduct2-' + shoppingCartCurrent[i].id).append(
+            $('<span/>', {
+                id: 'span2-' + shoppingCartCurrent[i].id
+            }))
+        $('#' + 'span2-' + shoppingCartCurrent[i].id).append(
+            $('<em/>', {
+                id: 'em-' + shoppingCartCurrent[i].id,
+                text: 'Color: ' + shoppingCartCurrent[i].color
+            }))
+        //Segunda Columna
+        $('#' + 'tr-' + shoppingCartCurrent[i].id).append(
+            $('<td/>', {
+                id: 'td2-' + shoppingCartCurrent[i].id,
+                class: 'text-center'
+            }))
+        $('#' + 'td2-' + shoppingCartCurrent[i].id).append(
+            $('<div/>', {
+                id: 'div2-' + shoppingCartCurrent[i].id,
+                class: 'count-input'
+            }))
+        $('#' + 'div2-' + shoppingCartCurrent[i].id).append(
+            $('<select/>', {
+                id: 'slect-' + shoppingCartCurrent[i].id,
+                class: 'form-control'
+            }))
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).append('<option value=' + '1' + '>' + '1' + '</option>');
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).append('<option value=' + '2' + '>' + '2' + '</option>');
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).append('<option value=' + '3' + '>' + '3' + '</option>');
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).append('<option value=' + '4' + '>' + '4' + '</option>');
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).append('<option value=' + '5' + '>' + '5' + '</option>');
+        $('#' + 'slect-' + shoppingCartCurrent[i].id).val(shoppingCartCurrent[i].amount)
+        //Tercera Columna
+        $('#' + 'tr-' + shoppingCartCurrent[i].id).append(
+            $('<td/>', {
+                id: 'td3-' + shoppingCartCurrent[i].id,
+                class: 'text-center text-lg text-medium',
+                text: shoppingCartCurrent[i].price
+            }))
+        //Cuarta Columna
+        $('#' + 'tr-' + shoppingCartCurrent[i].id).append(
+            $('<td/>', {
+                id: 'td4-' + shoppingCartCurrent[i].id,
+                class: 'text-center text-lg text-medium',
+                text: shoppingCartCurrent[i].discount
+            }))
+        //Quinta Columna
+        $('#' + 'tr-' + shoppingCartCurrent[i].id).append(
+            $('<td/>', {
+                id: 'td5-' + shoppingCartCurrent[i].id,
+                class: 'text-center'
+            }))
+        $('#' + 'td5-' + shoppingCartCurrent[i].id).append(
+            $('<a/>', {
+                'id': 'a3-' + shoppingCartCurrent[i].id,
+                'class': 'remove-from-cart',
+                'href': '#',
+                'data-toggle': 'tooltip',
+                'title': '',
+                'data-original-title': 'Eliminar'
+            }))
+        $('#' + 'a3-' + shoppingCartCurrent[i].id).append(
+            $('<i/>', {
+                id: 'i2-' + shoppingCartCurrent[i].id,
+                class: 'icon-cross',
+                onclick: 'removeElementCart(' + i + ',' + shoppingCartCurrent[i].id + ')'
+            }))
+        //TODO= Evento para Modal Eliminar
+    }
+}
+
+
 ////////////////////////////////////////////////////Funciones de carga de Todas los HTMLs /////////////////////////////////////////////////////////
 
 function LoadPages() {
@@ -764,88 +991,134 @@ function LoadPages() {
 }
 ////////////////////////////////////////////////////Funciones de carga de Paguina Cuenta de Usuario/////////////////////////////////////////////////////////
 
-function InitPageAccountAdress() {
 
-    //chargeProvincesCombo()
-    //searchZipCode()
 
+async function reloadLocality() {
+    await loadLocality();
+    $("#account-city option[value='" + ActiveUser.direction.idcity + "']").attr("selected", true);
+    await searchZipCode();
 }
 
 function loadLocality() {
-
-    let locality = $("#account-province").val();
-    let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCiudades?provincia=" + locality
-    let repeatedValues = [];
-    $.ajax({
-        method: "GET",
-        url: url,
-        cache: false,
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-            $("#account-city").empty()
-            if (data.Localidades.length != 0) {
-                repeatedValues.push(data.Localidades[0].Localidad)
-                for (let i = 0; i < data.Localidades.length; i++) {
-                    if (i != 0) {
-                        for (let y = 0; y < repeatedValues.length; y++) {
-                            if (repeatedValues[y] != data.Localidades[i].Localidad) {
-                                $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
+    return new Promise((resolve, reject) => {
+        let locality = $("#account-province").val();
+        let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCiudades?provincia=" + locality
+        let repeatedValues = [];
+        $.ajax({
+            method: "GET",
+            url: url,
+            cache: false,
+            dataType: "json",
+            beforeSend: function () {},
+            success: function (data) {
+                $("#account-city").empty()
+                if (data.Localidades.length != 0) {
+                    repeatedValues.push(data.Localidades[0].Localidad)
+                    for (let i = 0; i < data.Localidades.length; i++) {
+                        if (i != 0) {
+                            for (let y = 0; y < repeatedValues.length; y++) {
+                                if (repeatedValues[y] != data.Localidades[i].Localidad) {
+                                    $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
+                                }
                             }
+                        } else {
+                            $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
                         }
-                    } else {
-                        $("#account-city").append('<option value=' + data.Localidades[i].OldZip + '>' + data.Localidades[i].Localidad + '</option>');
                     }
+                    enableDisableVerificationDirection()
+                } else {
+                    $("#account-city").append($("<option>", {
+                        value: 0,
+                        text: 'Servicio Sin Datos'
+                    }));
                 }
-            } else {
-                $("#account-city").append($("<option>", {
-                    value: 0,
-                    text: 'Servicio Sin Datos'
-                }));
+            },
+            error: function (request, error) {
+                /*A futuro Logear rrores de Servicio en backend*/
+                console.log(arguments);
             }
-        },
-        error: function (request, error) {
-            /*A futuro Logear rrores de Servicio en backend*/
-            console.log(arguments);
-        }
+        });
+        setTimeout(() => {
+            resolve();;
+        }, 5000);
     });
 }
 
-
 function searchZipCode() {
+    return new Promise((resolve, reject) => {
+        let province = $("#account-province").val();
+        let provinceSelected = $('#account-province option:selected').html()
+        let locality = $('#account-city option:selected').html()
+        locality = locality.replace(/\s+/g, "%20")
+        let street = $("#account-address").val()
+        street = street.replace(/\s+/g, "%20")
+        let number = $("#account-numberStreet").val()
+        let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCP?provincia=" + province + "&localidad=" + locality + "&calle=" + street + "&altura=" + number;
+        $.ajax({
+            method: "GET",
+            url: url,
+            cache: false,
+            dataType: "json",
+            beforeSend: function () {},
+            success: function (data) {
 
-    let province = $("#account-province").val();
-    let provinceSelected = $('#account-province option:selected').html()
-    let locality = $('#account-city option:selected').html()
-    locality = locality.replace(/\s+/g, "%20")
-    let street = $("#account-address").val()
-    street = street.replace(/\s+/g, "%20")
-    let number = $("#account-numberStreet").val()
-    let url = "https://www6.oca.com.ar/BuscadorCP/WebService.asmx/getCP?provincia=" + province + "&localidad=" + locality + "&calle=" + street + "&altura=" + number;
-    $.ajax({
-        method: "GET",
-        url: url,
-        cache: false,
-        dataType: "json",
-        beforeSend: function () {},
-        success: function (data) {
-
-            if (data.Localidades.length == 0) {
-                //alertar que la direccion NO existe
-                alert("Direccion Inexistente !!")
-            } else {
-                $("#account-zip").val(data.Localidades[0].NewZip)
-                saveUserDirection(data.Localidades[0].Nombre1, number, provinceSelected, data.Localidades[0].Localidad, data.Localidades[0].NewZip, ActiveUser.direction.latitude, ActiveUser.direction.longitude, data.Localidades[0].Tipo, data.Localidades[0].Partido)
-                getCoords(ActiveUser.direction.street + " " + ActiveUser.direction.number, ActiveUser.direction.city, ActiveUser.direction.province)
-                $("#mapa").show()
+                if (data.Localidades.length == 0) {
+                    //Direccion NO existente
+                    $("#account-UpdateDirections").removeAttr("disabled")
+                    $("#account-Submit").attr({
+                        disabled: ""
+                    });
+                    $("#viewErrorDirection").append('<p id="msgErrorLogin" class="text-danger"><strong>Direccion no Encontrada !, por favor verifique los datos ingresdos y Actualice los mismos.</strong></p>')
+                    $("#mapa").hide()
+                    $("#msgMaps").remove()
+                } else {
+                    $("#account-zip").val(data.Localidades[0].NewZip)
+                    saveUserDirection(data.Localidades[0].Nombre1, number, data.Localidades[0].SiglaProvincia, provinceSelected, data.Localidades[0].OldZip, data.Localidades[0].Localidad, data.Localidades[0].NewZip, ActiveUser.direction.latitude, ActiveUser.direction.longitude, data.Localidades[0].Tipo, data.Localidades[0].Partido)
+                    getCoords(ActiveUser.direction.street + " " + ActiveUser.direction.number, ActiveUser.direction.city, ActiveUser.direction.province)
+                    $("#mapa").show()
+                    $("#account-Submit").removeAttr("disabled")
+                    $("#account-UpdateDirections").attr({
+                        disabled: ""
+                    });
+                    $("#msgErrorLogin").remove()
+                    $("#viewMessageMap").append('<p id="msgMaps" class="text-lg text-primary"><strong>Verifique su ubicacion, en caso de ser necesario ubique su Domicilio con el Pin del Mapa.</strong></p>')
+                }
+            },
+            error: function (request, error) {
+                //console.log(arguments);
+                alert(" Se produjo un error: " + error);
             }
-        },
-        error: function (request, error) {
-            //console.log(arguments);
-            alert(" Se produjo un error: " + error);
-        }
+        });
+        setTimeout(() => {
+            resolve();;
+        }, 5000);
     });
+}
 
+function enableDisableVerificationDirection() {
+    if (($("#account-province").val() != "") & ($("#account-city").val() != "") & ($("#account-address").val() != "") & ($("#account-numberStreet").val() != "")) {
+        $("#msgErrorLogin").remove()
+        $("#mapa").hide()
+        $("#msgMaps").remove()
+        $("#account-zip").val("")
+        $("#account-UpdateDirections").removeAttr("disabled")
+        $("#account-Submit").attr({
+            disabled: ""
+        });
+    } else {
+        $("#account-Submit").removeAttr("disabled")
+        $("#account-UpdateDirections").attr({
+            disabled: ""
+        });
+        $("#account-Submit").attr({
+            disabled: ""
+        });
+    }
+}
+
+function searchDirectionBtn() {
+    $("#msgErrorLogin").remove()
+    searchZipCode()
 }
 
 function Updatemap(latitude, longitude) {
@@ -867,7 +1140,7 @@ function Updatemap(latitude, longitude) {
         map.panTo(evt.latLng);
         //Seteo en un Array las nuevas Coordenadas
         let arrayLng = String(evt.latLng).split(",", 2);
-        //Guardo las Nuevas COordenadas seleccionadas por el Pin
+        //Guardo las Nuevas Coordenadas seleccionadas por el Pin
         saveLngLatUserDirection(arrayLng[0].replace("(", ""), arrayLng[1].replace(")", ""))
     });
     map.setCenter(vMarker.position);
@@ -875,32 +1148,49 @@ function Updatemap(latitude, longitude) {
 }
 
 function saveLngLatUserDirection(latitude, longitude) {
-
-    //console.log("Valor Latitud antes de Actualizar: " + ActiveUser.direction.latitude)
-    //console.log("Valor Longitud antes de Actualizar: " + ActiveUser.direction.longitude)
+    let userNewDirection
+    let userActive
 
     ActiveUser.direction.latitude = latitude;
     ActiveUser.direction.longitude = longitude;
 
-    console.log("Valor Latitud DESPUES de Actualizar: " + ActiveUser.direction.latitude)
-    console.log("Valor longitud DESPUES de Actualizar: " + ActiveUser.direction.longitude)
+    //Aca tengo el usuario completo
+    userActive = JSON.parse(sessionStorage.getItem('User'))
+    //Nueva Direccion
+    userNewDirection = new Direction(userActive.direction.street, userActive.direction.number, userActive.direction.province, userActive.direction.idprovince, userActive.direction.city, userActive.direction.idcity, userActive.direction.zipCode, userActive.direction.state, latitude, longitude, userActive.direction.typeDirection)
+    //Cargo el objeto nuevo dentro de objeto Usuario
+    userActive.direction = userNewDirection
+    //Guardo en Storage
+    sessionStorage.setItem('User', JSON.stringify(userActive))
 }
 
-function saveUserDirection(street, number, province, city, zipCode, latitude, longitude, typeDirection, state) {
+function saveUserDirection(street, number, idprovince, province, idcity, city, zipCode, latitude, longitude, typeDirection, state) {
+    let userNewDirection
+    let userActive
 
     ActiveUser.direction.street = street;
     ActiveUser.direction.number = number;
+    ActiveUser.direction.idprovince = idprovince
     ActiveUser.direction.province = province;
+    ActiveUser.direction.idcity = idcity
     ActiveUser.direction.city = city;
     ActiveUser.direction.zipCode = zipCode;
     ActiveUser.direction.latitude = latitude;
     ActiveUser.direction.longitude = longitude;
     ActiveUser.direction.typeDirection = typeDirection;
     ActiveUser.direction.state = state;
+
+    //Aca tengo el usuario completo
+    userActive = JSON.parse(sessionStorage.getItem('User'))
+    //Nueva Direccion
+    userNewDirection = new Direction(street, number, province, idprovince, city, idcity, zipCode, state, latitude, longitude, typeDirection)
+    //Cargo el objeto nuevo dentro de objeto Usuario
+    userActive.direction = userNewDirection
+    //Guardo en Storage
+    sessionStorage.setItem('User', JSON.stringify(userActive))
 }
 
 function getCoords(street, city, province) {
-
     let vMarker
     let map
     let geocoder = new google.maps.Geocoder();
@@ -922,7 +1212,8 @@ function getCoords(street, city, province) {
 }
 
 function saveDirectionUser() {
-    //validar que este logeado antes de guardar informacion
+    //Invoco al back end a Futuro
+    alert("Se actualizo la Direccion Exitosamente!!")
 }
 
 function isLogged() {
