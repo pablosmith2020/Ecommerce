@@ -42,7 +42,7 @@ class User {
 
 /*Instancio y Ingreso Valores al Objeto User para poder validar y Emular respuesta del Backend */
 
-UserDirection= new Direction("colon",3532,"Buenos Aires","B","Lomas del Mirador","1752","1752","La Matanza","-34.6683937","-58.528612","Calle")
+UserDirection= new Direction("el rastreador",936,"CIUDAD AUTONOMA BUENOS AIRES","C", "CIUDAD AUTONOMA BUENOS AIRES","1408","1408","CAPITAL FEDERAL","-34.6683937","-58.528612","Calle")
 
 if (sessionStorage.getItem('User') == "" || sessionStorage.getItem('User') == null) {
 
